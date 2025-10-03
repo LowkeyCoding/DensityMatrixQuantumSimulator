@@ -37,14 +37,14 @@ TEST_CASE("Test generating state from binary string") {
         d0,d0,d0,d1
     };
 
-    CHECK(DensitryMatrixApproxEq(m00,c00,0));
-    CHECK(DensitryMatrixApproxEq(m01,c01,0));
-    CHECK(DensitryMatrixApproxEq(m10,c10,0));
-    CHECK(DensitryMatrixApproxEq(m11,c11,0));
+    CHECK(DensityMatrixApproxEq(m00,c00,0));
+    CHECK(DensityMatrixApproxEq(m01,c01,0));
+    CHECK(DensityMatrixApproxEq(m10,c10,0));
+    CHECK(DensityMatrixApproxEq(m11,c11,0));
 }
 
 TEST_CASE("Rotation Gates") {
     cx_mat rvg = RV(1,2,3);
     cx_mat rvg2 = RV(1,2,3.0001);
-    CHECK(DensitryMatrixApproxEq(rvg, rvg2, 0.0001));
+    CHECK(DensityMatrixApproxEq(rvg, rvg2, 0.0001));
 }

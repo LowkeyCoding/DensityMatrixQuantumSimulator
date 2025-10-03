@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(DensitryMatrixQuantumSimulator)
+project(DensityMatrixQuantumSimulator)
 
 option(DMQS_TESTS "DMQSUnit Test" TRUE)
 

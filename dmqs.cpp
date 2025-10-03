@@ -12,7 +12,7 @@ cx_mat BinaryStringToDensityMatrix(const string bin){
     } else {
         density_matrix = S1;
     }
-    
+
     for (int i = 1; i < n; i++) {
         if (bin[i] == '0') {
             density_matrix = kron(density_matrix, S0);
@@ -57,7 +57,7 @@ cx_mat ApplyGateToDensityMatrix(cx_mat rho, cx_mat U){
 /// @param rho2 Second density matrix
 /// @param delta Maximum difference allowed for equality 
 /// @return Whether the two density matrixes are equal
-bool DensitryMatrixApproxEq(cx_mat rho1, cx_mat rho2, double delta) {
+bool DensityMatrixApproxEq(cx_mat rho1, cx_mat rho2, double delta) {
     assert(rho1.n_rows == rho2.n_rows);
     assert(rho1.n_cols == rho2.n_cols);
     assert(rho1.n_cols == rho2.n_rows);
