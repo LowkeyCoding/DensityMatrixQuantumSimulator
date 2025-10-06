@@ -159,8 +159,8 @@ vector<double> GetPropabilities(cx_mat rho) {
 /// @brief Gets a sample from the density matrix for each random value provided.
 /// @param rho Density matrix to sample from.
 /// @return A vector of samples from the density matrix.
-vector<size_t> Sample(cx_mat rho, vector<double> random_values) {
-    vector<size_t> samples;
+vector<int32_t> Sample(cx_mat rho, vector<double> random_values) {
+    vector<int32_t> samples;
     vector<double> weights = GetPropabilities(rho);
     samples.reserve(random_values.size());
     
@@ -179,4 +179,25 @@ vector<size_t> Sample(cx_mat rho, vector<double> random_values) {
     }
     
     return samples;
+}
+
+/// @brief Applies amplitude dampening and dephasing channel as seen in: 10.1098/rspa.2008.0439
+/// @param rho Density matrix to apply 
+/// @param T1 Energy relaxation time
+/// @param T2 Phase choherence time
+/// @param t time channel acts upon qubits
+/// @return 
+cx_mat ApplyAmplitudeDampeningAndDephasing(cx_mat rho, double* T1, double* T2, double t) {
+    cx_mat temp_state = rho;
+    double n = ceil(log2(rho.n_rows));
+    for(int i = 0; i < n; i++){
+        double px = (1 - exp(-t/T1[i]))*0.25;
+        double py = px;
+        double pz = 0.5 - px - (exp(-t/T2[i])*0.5);
+        cx_mat XN = GateToNQubitSystem(X(),i,n);
+        cx_mat YN = GateToNQubitSystem(Y(),i,n);
+        cx_mat ZN = GateToNQubitSystem(Z(),i,n);
+        temp_state = ((1 - px - py - pz) * temp_state) + (px * XN * temp_state * XN)  + (py * YN * temp_state * YN) + (pz * ZN * temp_state * ZN);
+    }
+    return temp_state;
 }
