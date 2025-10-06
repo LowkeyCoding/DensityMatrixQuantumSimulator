@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD_EXTENSIONS FALSE)
 find_package(Armadillo REQUIRED)
 find_package(spdlog REQUIRED)
 
-add_library(external SHARED dmqs.cpp)
+add_library(external SHARED gates.cpp dmqs.cpp)
 target_compile_features(external PRIVATE cxx_std_23)
 target_compile_options(external PUBLIC -Wpedantic -Wall -Wextra)
 target_link_libraries(external PUBLIC armadillo spdlog)

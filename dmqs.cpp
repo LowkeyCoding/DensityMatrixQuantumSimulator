@@ -1,23 +1,23 @@
 #include "dmqs.h"
-#include "gates.h"
-/// @brief Takes a binary string and converts it into a density matrix with the basis state 01
+
+/// @brief Takes a binary string and converts it size_to a density matrix with the basis state 01
 /// @param bin A binary string e.g "0101"
 /// @return The density matrix 
 cx_mat BinaryStringToDensityMatrix(const string bin){
-    int n = bin.length();
+    size_t n = bin.length();
 
     cx_mat density_matrix;
     if (bin[0] == '0') {
-        density_matrix = S0;
+        density_matrix = B0();
     } else {
-        density_matrix = S1;
+        density_matrix = B1();
     }
 
-    for (int i = 1; i < n; i++) {
+    for (size_t i = 1; i < n; i++) {
         if (bin[i] == '0') {
-            density_matrix = kron(density_matrix, S0);
+            density_matrix = kron(density_matrix, B0());
         } else {
-            density_matrix = kron(density_matrix, S1);
+            density_matrix = kron(density_matrix, B1());
         }
     }
     
@@ -29,13 +29,13 @@ cx_mat BinaryStringToDensityMatrix(const string bin){
 /// @param target The index (zero-based) of the target qubit within the system.
 /// @param n The total number of qubits in the system.
 /// @return An n-qubit gate that only affects the specified target qubit.
-cx_mat GateToNQubitSystem(cx_mat U1, int target, int n){
-    cx_mat UN = target == 0 ? U1 : Id;
-    for(int i = 1; i < n; i++){
+cx_mat GateToNQubitSystem(cx_mat U1, size_t target, size_t n){
+    cx_mat UN = target == 0 ? U1 : Id();
+    for(size_t i = 1; i < n; i++){
         if (i == target){
             UN = kron(UN, U1);
         } else {
-            UN = kron(UN, Id);
+            UN = kron(UN, Id());
         }
     }
     return UN;
@@ -52,6 +52,29 @@ cx_mat ApplyGateToDensityMatrix(cx_mat rho, cx_mat U){
     return (U * rho) * (conj(U).t());
 }
 
+cx_mat ApplyGate(cx_mat rho, string US, size_t qubit) {
+    size_t qubit_count = ceil(log2(rho.n_rows));
+    cx_mat U;
+    if(US == "X") {
+        U = X();
+    } else if (US == "Y") {
+        U = Y();
+    } else if (US == "Z") {
+        U = Z();
+    } else if (US == "Id") {
+        U = Id();
+    } else if (US == "B0") {
+        U = B0();
+    } else if (US == "B1") {
+        U = B1();
+    } else if (US == "H") {
+        U = H();
+    } else if (US == "CX") {
+        U = CX();
+    }
+    return ApplyGateToDensityMatrix(rho, GateToNQubitSystem(U,qubit,qubit_count));
+}
+
 /// @brief Checks equality between two density matrixes
 /// @param rho1 First density matrix
 /// @param rho2 Second density matrix
@@ -61,8 +84,8 @@ bool DensityMatrixApproxEq(cx_mat rho1, cx_mat rho2, double delta) {
     assert(rho1.n_rows == rho2.n_rows);
     assert(rho1.n_cols == rho2.n_cols);
     assert(rho1.n_cols == rho2.n_rows);
-    for(int i = 0; i < rho1.n_rows; i++) {
-        for(int j = 0; j < rho1.n_cols; j++){
+    for(size_t i = 0; i < rho1.n_rows; i++) {
+        for(size_t j = 0; j < rho1.n_cols; j++){
             if ((rho1.at(i,j).real() - rho2.at(i,j).real()) > delta ) {
                 return false;
             } 
@@ -74,9 +97,9 @@ bool DensityMatrixApproxEq(cx_mat rho1, cx_mat rho2, double delta) {
     return true;
 }
 
-int rearrangeBits(int i, vector<int> a) {
-    int ret = 0;
-    for (int j = 0; j < a.size(); j++){
+size_t rearrangeBits(size_t i, vector<size_t> a) {
+    size_t ret = 0;
+    for (size_t j = 0; j < a.size(); j++){
         if (a[j] >= 0) {
             ret |= ((i >> j) & 1) << a[j];
         }
@@ -88,28 +111,28 @@ int rearrangeBits(int i, vector<int> a) {
 /// @param rho Density matrix to take a partial trace from.
 /// @param targets A vector containing the qubits to trace.
 /// @return A denisty matrix of the traced qubits.
-cx_mat PartialTrace(cx_mat rho, vector<int> targets) {
+cx_mat PartialTrace(cx_mat rho, vector<size_t> targets) {
     assert(rho.n_rows == rho.n_cols);
     assert(rho.n_rows >= targets.size());
-    int n = ceil(log2(rho.n_rows));
-    int traced = 1 << (n-targets.size());
-    int keept = 1 << targets.size();
-    vector<int> tt;
-    for(int i = 0; i < n; i++){
+    size_t n = ceil(log2(rho.n_rows));
+    size_t traced = 1 << (n-targets.size());
+    size_t keept = 1 << targets.size();
+    vector<size_t> tt;
+    for(size_t i = 0; i < n; i++){
         tt.push_back(i);
     }
-    int offset = 0;
-    for (int i = 0; i < targets.size(); i++) {
+    size_t offset = 0;
+    for (size_t i = 0; i < targets.size(); i++) {
         tt.erase(tt.begin() + targets[i] + offset);
         offset -= 1;
     }
     cx_mat result = cx_mat(keept,keept, fill::zeros);
-    for (int bit = 0; bit < traced; bit++) {
-        int shbr = rearrangeBits(bit, tt);
-        for(int r = 0; r < traced; r++) {
-            int ir = shbr | rearrangeBits(r, targets);
-            for(int c = 0; c < traced; c++){
-                int ic = shbr | rearrangeBits(c, targets);
+    for (size_t bit = 0; bit < traced; bit++) {
+        size_t shbr = rearrangeBits(bit, tt);
+        for(size_t r = 0; r < traced; r++) {
+            size_t ir = shbr | rearrangeBits(r, targets);
+            for(size_t c = 0; c < traced; c++){
+                size_t ic = shbr | rearrangeBits(c, targets);
                 result(r,c) += rho(ir,ic);
             }
         }
@@ -136,8 +159,8 @@ vector<double> GetPropabilities(cx_mat rho) {
 /// @brief Gets a sample from the density matrix for each random value provided.
 /// @param rho Density matrix to sample from.
 /// @return A vector of samples from the density matrix.
-vector<int> Sample(cx_mat rho, vector<double> random_values) {
-    vector<int> samples;
+vector<size_t> Sample(cx_mat rho, vector<double> random_values) {
+    vector<size_t> samples;
     vector<double> weights = GetPropabilities(rho);
     samples.reserve(random_values.size());
     
