@@ -36,6 +36,7 @@ TEST_CASE("Test generating state from binary string") {
         d0,d0,d0,d0,
         d0,d0,d0,d1
     };
+    
 
     CHECK(DensityMatrixApproxEq(m00,c00,0));
     CHECK(DensityMatrixApproxEq(m01,c01,0));
@@ -47,4 +48,42 @@ TEST_CASE("Rotation Gates") {
     cx_mat rvg = RV(1,2,3);
     cx_mat rvg2 = RV(1,2,3.0001);
     CHECK(DensityMatrixApproxEq(rvg, rvg2, 0.0001));
+}
+TEST_CASE("Rearrange bits"){
+    vector<int> t12 ={1,2};
+    vector<int> t03 ={0,3};
+    cx_double d0 = cx_double(0,0);
+    cx_double d1 = cx_double(1,0);
+    cx_mat::fixed<4,4> c00 = {
+        d1,d0,d0,d0,
+        d0,d0,d0,d0,
+        d0,d0,d0,d0,
+        d0,d0,d0,d0
+    };
+        
+    cx_mat::fixed<4,4> c11 = {
+        d0,d0,d0,d0,
+        d0,d0,d0,d0,
+        d0,d0,d0,d0,
+        d0,d0,d0,d1
+    };
+
+    cx_mat rho = BinaryStringToDensityMatrix("1001");
+    CHECK(DensityMatrixApproxEq(PartialTrace(rho,t12),c00,0));
+    CHECK(DensityMatrixApproxEq(PartialTrace(rho,t03),c11,0));
+}
+
+TEST_CASE("Sample Bell State"){
+    cx_mat rho = BinaryStringToDensityMatrix("00");
+    rho = ApplyGateToDensityMatrix(rho, GateToNQubitSystem(H,0,2));
+    rho = ApplyGateToDensityMatrix(rho, CX);
+    vector<double> random = {0.31139488122381065,0.706346140299032,0.0811185803790464,0.8431768096973808,0.9705136993318086,0.8775436953654865,0.6858954365356232,0.18346957566198463,0.2716272931656005,0.8928967556999657,};
+    int counts[] = {0,0,0,0};
+    int pre_counts[] = {4,0,0,6};
+    for (int v : Sample(rho,random)) {
+       counts[v] += 1;
+    }
+    for(int i = 0; i < 4; i++) {
+        CHECK(pre_counts[i] == counts[i]);
+    }
 }

@@ -73,3 +73,87 @@ bool DensityMatrixApproxEq(cx_mat rho1, cx_mat rho2, double delta) {
     }
     return true;
 }
+
+int rearrangeBits(int i, vector<int> a) {
+    int ret = 0;
+    for (int j = 0; j < a.size(); j++){
+        if (a[j] >= 0) {
+            ret |= ((i >> j) & 1) << a[j];
+        }
+    }
+    return ret;
+}
+
+/// @brief Takes a partial trace of the provided target qubits.
+/// @param rho Density matrix to take a partial trace from.
+/// @param targets A vector containing the qubits to trace.
+/// @return A denisty matrix of the traced qubits.
+cx_mat PartialTrace(cx_mat rho, vector<int> targets) {
+    assert(rho.n_rows == rho.n_cols);
+    assert(rho.n_rows >= targets.size());
+    int n = ceil(log2(rho.n_rows));
+    int traced = 1 << (n-targets.size());
+    int keept = 1 << targets.size();
+    vector<int> tt;
+    for(int i = 0; i < n; i++){
+        tt.push_back(i);
+    }
+    int offset = 0;
+    for (int i = 0; i < targets.size(); i++) {
+        tt.erase(tt.begin() + targets[i] + offset);
+        offset -= 1;
+    }
+    cx_mat result = cx_mat(keept,keept, fill::zeros);
+    for (int bit = 0; bit < traced; bit++) {
+        int shbr = rearrangeBits(bit, tt);
+        for(int r = 0; r < traced; r++) {
+            int ir = shbr | rearrangeBits(r, targets);
+            for(int c = 0; c < traced; c++){
+                int ic = shbr | rearrangeBits(c, targets);
+                result(r,c) += rho(ir,ic);
+            }
+        }
+    }
+    return result;
+}
+
+/// @brief Gets the weights from the diagonal of the density matrix
+/// @param rho Density matrix to get weights from
+/// @return The weights of density matrix.
+vector<double> GetPropabilities(cx_mat rho) {
+    // Get the diagonal elements (these are the probabilities)
+    cx_vec diagonal = rho.diag();
+    
+    // Convert to real probabilities (diagonal of density matrix should be real and non-negative)
+    vector<double> weights(diagonal.n_elem);
+    for (size_t i = 0; i < diagonal.n_elem; ++i) {
+        weights[i] = diagonal(i).real();  // Take real part (imaginary should be zero)
+    }
+    
+    return weights;
+}
+
+/// @brief Gets a sample from the density matrix for each random value provided.
+/// @param rho Density matrix to sample from.
+/// @return A vector of samples from the density matrix.
+vector<int> Sample(cx_mat rho, vector<double> random_values) {
+    vector<int> samples;
+    vector<double> weights = GetPropabilities(rho);
+    samples.reserve(random_values.size());
+    
+    // Precompute cumulative distribution once
+    vector<double> cumulative(weights.size());
+    partial_sum(weights.begin(), weights.end(), cumulative.begin());
+    double total = cumulative.back();
+    for (double& val : cumulative) {
+        val /= total;
+    }
+    
+    // Sample for each random value
+    for (double r : random_values) {
+        auto it = lower_bound(cumulative.begin(), cumulative.end(), r);
+        samples.push_back(distance(cumulative.begin(), it));
+    }
+    
+    return samples;
+}
