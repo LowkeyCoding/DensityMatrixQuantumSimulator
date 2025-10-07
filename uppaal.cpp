@@ -1,27 +1,27 @@
 #include "uppal.h"
 
-map<string, cx_mat> circuits;
+map<int, cx_mat> circuits;
 
-void NewCircuit(string name, double* matrix, int size) {
-    circuits.insert({name, ToMatrix(matrix, size)});
+void NewCircuit(int id, double* matrix, int size) {
+    circuits.insert({id, ToMatrix(matrix, size)});
 }
 
-void UApplyGate(string circuit, string gate, int target) {
-    auto elm = circuits.find(circuit);
+void UApplyGate(int id, string gate, int target) {
+    auto elm = circuits.find(id);
     assert(elm != circuits.end());
     cx_mat rho = elm->second;
     rho = ApplyGate(rho, gate, target);
 }
 
-void UAmplitudeDampeningAndDephasing(string circuit, double* T1, double* T2, double t){
-    auto elm = circuits.find(circuit);
+void UAmplitudeDampeningAndDephasing(int id, double* T1, double* T2, double t){
+    auto elm = circuits.find(id);
     assert(elm != circuits.end());
     cx_mat rho = elm->second;
     rho = ApplyAmplitudeDampeningAndDephasing(rho, T1,T2, t);
 }
 
-void UMeasureAll(string circuit, double* random_values, int* res, int size) {
-    auto elm = circuits.find(circuit);
+void UMeasureAll(int id, double* random_values, int* res, int size) {
+    auto elm = circuits.find(id);
     assert(elm != circuits.end());
     cx_mat rho = elm->second;
     vector<double> rv = vector<double>(random_values, (random_values + sizeof(double)*size));
