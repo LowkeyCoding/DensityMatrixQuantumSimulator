@@ -1,4 +1,5 @@
 #include "dmqs.h"
+#include "uppaal.h"
 #include "gates.h"
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
@@ -38,9 +39,9 @@ TEST_CASE("Test generating state from binary string") {
     };
     SUBCASE("Apply gate using string") {
         // TODO: Add more tests
-        cx_mat t1 = ApplyGate(c00, "X", 0);
-        cx_mat t2 = ApplyGate(c00, "X", 1);
-       
+        cx_mat t1 = ApplyGate(c00, GX, 0);
+        cx_mat t2 = ApplyGate(c00, GX, 1);
+
         CHECK(DensityMatrixApproxEq(t1, c10,0));
         CHECK(DensityMatrixApproxEq(t2, c01,0));
     }

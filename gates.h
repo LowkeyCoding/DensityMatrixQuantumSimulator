@@ -3,6 +3,16 @@
 using namespace arma;
 #ifndef GATES_H
 #define GATES_H
+enum u_gate {
+  GId,
+  GX,
+  GY,
+  GZ,
+  GH,
+  GCX,
+  GB0,
+  GB1,
+}; 
 cx_mat X();
 cx_mat CX();
 cx_mat Y();

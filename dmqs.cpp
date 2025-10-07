@@ -52,25 +52,35 @@ cx_mat ApplyGateToDensityMatrix(cx_mat rho, cx_mat U){
     return (U * rho) * (conj(U).t());
 }
 
-cx_mat ApplyGate(cx_mat rho, string US, size_t qubit) {
+
+cx_mat ApplyGate(cx_mat rho, u_gate gate, size_t qubit) {
     size_t qubit_count = ceil(log2(rho.n_rows));
     cx_mat U;
-    if(US == "X") {
-        U = X();
-    } else if (US == "Y") {
-        U = Y();
-    } else if (US == "Z") {
-        U = Z();
-    } else if (US == "Id") {
-        U = Id();
-    } else if (US == "B0") {
-        U = B0();
-    } else if (US == "B1") {
-        U = B1();
-    } else if (US == "H") {
-        U = H();
-    } else if (US == "CX") {
-        U = CX();
+    switch (gate) {
+        case GX:
+            U = X();
+            break;
+        case GY:
+            U = Y();
+            break;
+        case GZ:
+            U = Z();
+            break;
+        case GCX:
+            return ApplyGateToDensityMatrix(rho, CX());
+            break;
+        case GH:
+            U = H();
+            break;
+        case GB0:
+            U = B0();
+            break;
+        case GB1:
+            U = B1();
+            break;
+        default:
+            U = Id();
+            break;
     }
     return ApplyGateToDensityMatrix(rho, GateToNQubitSystem(U,qubit,qubit_count));
 }
