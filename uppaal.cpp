@@ -27,6 +27,7 @@ void UMeasureAll(double* rho, int rho_size, double* random_values, int* res, int
         res[i] = vres[i];
     }
 }
+
 cx_mat ToMatrix(double* matrix, int size){
     cx_double test[size*size];
     for (int i = 0; i < size*size; i++)

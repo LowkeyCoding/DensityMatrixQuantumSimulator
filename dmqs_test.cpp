@@ -64,6 +64,65 @@ TEST_CASE("Rotation Gates") {
     cx_mat rz2 = RZ(80.0001);
     CHECK(DensityMatrixApproxEq(rz, rz, 0.0001));
 }
+
+TEST_CASE("Controlled Gates Test") {
+
+    map<string, cx_mat> states = {};
+    // Generate all binary strings of size 2 and 3.
+    for (int n = 2; n < 4; n++) {
+        for (int i = 0; i < (1 << n); i++) {
+            string s;
+
+            // build string from bits of i
+            for (int j = n - 1; j >= 0; --j)
+                s += ((i >> j) & 1) ? '1' : '0';
+            states.insert({s, BinaryStringToDensityMatrix(s)});
+        }
+    }
+    
+    SUBCASE("Controled Z Gate ") {
+        auto CZ12_T1 = ApplyGateToDensityMatrix(states["10"], CG(Y(), 1, 2));
+        auto CZ12_F1 = ApplyGateToDensityMatrix(states["10"], CG(Z(), 1, 2));
+        cout << states["10"] << endl;
+        cout << CZ12_T1 << endl;
+        cout << CZ12_F1 << endl;
+    }
+    SUBCASE("q2 > q1") {
+        auto C21_T1 = ApplyGateToDensityMatrix(states["11"], CG(X(), 2, 1));
+        auto C21_F1 = ApplyGateToDensityMatrix(states["10"], CG(X(), 2, 1));
+        
+        auto C21_T0 = ApplyGateToDensityMatrix(states["01"], CG(X(), 2, 1));
+        auto C21_F0 = ApplyGateToDensityMatrix(states["00"], CG(X(), 2, 1));
+
+        auto C31_T1 = ApplyGateToDensityMatrix(states["111"], CG(X(), 3, 1));
+        auto C31_F1 = ApplyGateToDensityMatrix(states["110"], CG(X(), 3, 1));
+
+        auto C31_T0 = ApplyGateToDensityMatrix(states["011"], CG(X(), 3, 1));
+        auto C31_F0 = ApplyGateToDensityMatrix(states["010"], CG(X(), 3, 1));
+
+        // Should create a function that given the state, gate and the first qubit to attach to will resize the gate such that both matrixes are of the same size.
+        auto C32_T1 = ApplyGateToDensityMatrix(states["011"], kron(Id(),CG(X(), 3, 2)));
+        auto C32_F1 = ApplyGateToDensityMatrix(states["010"], kron(Id(),CG(X(), 3, 2)));
+        
+        // Is CX 1,2 still CX
+        CHECK(DensityMatrixApproxEq(CG(X(),1,2), CX(), 0.0));
+        
+        CHECK(DensityMatrixApproxEq(C21_T1, states["01"], 0.0));
+        CHECK(DensityMatrixApproxEq(C21_F1, states["10"], 0.0));
+
+        CHECK(DensityMatrixApproxEq(C21_T0, states["11"], 0.0));
+        CHECK(DensityMatrixApproxEq(C21_F0, states["00"], 0.0));
+
+        CHECK(DensityMatrixApproxEq(C31_T1, states["011"], 0.0));
+        CHECK(DensityMatrixApproxEq(C31_F1, states["110"], 0.0));
+
+        CHECK(DensityMatrixApproxEq(C31_T0, states["111"], 0.0));
+        CHECK(DensityMatrixApproxEq(C31_F0, states["010"], 0.0));
+
+        CHECK(DensityMatrixApproxEq(C32_T1, states["001"], 0.0));
+        CHECK(DensityMatrixApproxEq(C32_F1, states["010"], 0.0));
+    }
+}
 TEST_CASE("Rearrange bits"){
     vector<size_t> t12 ={1,2};
     vector<size_t> t03 ={0,3};

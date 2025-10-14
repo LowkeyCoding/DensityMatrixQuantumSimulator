@@ -11,3 +11,16 @@ void FromMatrix(cx_mat matrix, double* ret, int size);
 #ifdef __cplusplus
 } // end of "C" symbol name mangling
 #endif // __cplusplus
+
+// New Format
+// Assume all functions retuns the id of a given matrix operation
+/*
+int init_state(double* state, size_t size);
+int init_state(const char* state, size_t size);
+int apply_gate(int rho, int gate, int target);
+int apply_noise_addph(int rho, double* t1, double* t2, double t);
+int meassure_all(int rho);
+int meassure(int rho, int* qubits);
+int trace(int rho);
+bool is_pure(int rho);
+*/

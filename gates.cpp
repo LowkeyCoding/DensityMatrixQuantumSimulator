@@ -1,4 +1,5 @@
 #include "gates.h"
+
 /// @brief Basis state |0⟩
 cx_mat B0(){
      cx_mat::fixed<2, 2> gate = {
@@ -7,6 +8,7 @@ cx_mat B0(){
     };
     return gate;
 }
+
 /// @brief Basis state |1⟩
 cx_mat B1(){
      cx_mat::fixed<2, 2> gate = {
@@ -15,6 +17,7 @@ cx_mat B1(){
     };
     return gate;
 }
+
 /// @brief Identity gate
 cx_mat Id() {
     cx_mat::fixed<2, 2> gate = {
@@ -22,6 +25,10 @@ cx_mat Id() {
         cx_double(0,0),cx_double(1,0),
     };
     return gate;
+}
+
+cx_mat Id(int n) {
+    return cx_mat(pow(2,n),pow(2,n),fill::eye);
 }
 
 /// @brief X gate
@@ -59,6 +66,7 @@ cx_mat H() {
     };
     return gate;
 }
+
 /// @brief Controlled X gate 
 cx_mat CX() {
     cx_mat::fixed<4, 4> gate = {
@@ -104,4 +112,33 @@ cx_mat RZ(double theta){
         cx_double(0,0), cx_double(cos(theta_r/2),sin(theta_r/2))
     };
     return rz_theta;
+}
+
+/// @brief Takes an abitrary 1 qubit gate and control and target qubits and constructs a controlled version of the gate.
+/// @param gate The gate to apply to the target qubit when the control is 1.
+/// @param control The qubit that controls whether the gate should be applied.
+/// @param target
+/// @return Controlled gate
+cx_mat CG(cx_mat gate, int control, int target) {
+    cx_mat mat_control = B0();
+    cx_mat mat_target = B1();
+    int dist_between_qubits = abs(control-target);
+
+    if (dist_between_qubits > 1) {
+        if (control > target) {
+            mat_target = kron(Id(dist_between_qubits-1), mat_target);
+        } else {
+            mat_target = kron(mat_target, Id(dist_between_qubits-1));
+        }
+    }
+
+    if(control > target) {
+       mat_control = kron(Id(dist_between_qubits), mat_control);
+       mat_target =  kron(gate, mat_target);
+    } else {
+       mat_target = kron(mat_target, gate);
+       mat_control = kron(mat_control,Id(dist_between_qubits));
+    }
+
+    return mat_control + mat_target;
 }
