@@ -41,9 +41,15 @@ TEST_CASE("Test generating state from binary string") {
         // TODO: Add more tests
         cx_mat t1 = ApplyGate(c00, GX, 0);
         cx_mat t2 = ApplyGate(c00, GX, 1);
+        cx_mat t3 = ApplyGate(c00, GCX, 0);
+        cx_mat t4 = ApplyGate(c10, GCX, 0);
+        cx_mat t5 = ApplyGate(c11, GCX, 0);
 
         CHECK(DensityMatrixApproxEq(t1, c10,0));
         CHECK(DensityMatrixApproxEq(t2, c01,0));
+        CHECK(DensityMatrixApproxEq(t3, c00,0));
+        CHECK(DensityMatrixApproxEq(t4, c11,0));
+        CHECK(DensityMatrixApproxEq(t5, c10,0));
     }
     
 
@@ -95,4 +101,12 @@ TEST_CASE("Sample Bell State"){
     for(size_t i = 0; i < 4; i++) {
         CHECK(pre_counts[i] == counts[i]);
     }
+    rho = ApplyGateToDensityMatrix(rho, GateToNQubitSystem(H(),0,2));
+    SUBCASE("Pure and Mixed States") {
+        INFO("Trace:", trace(rho*rho));
+        double T1[] = {18,18};
+        double T2[] = {20,20};
+        CHECK(IsPure(ApplyAmplitudeDampeningAndDephasing(rho, T1, T2, 100), 0.000000000000001));
+    }
 }
+

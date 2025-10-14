@@ -52,6 +52,11 @@ cx_mat ApplyGateToDensityMatrix(cx_mat rho, cx_mat U){
     return (U * rho) * (conj(U).t());
 }
 
+bool IsPure(cx_mat rho, double delta) {
+    cx_double t = trace(rho*rho);
+    return t.real() - 1 < delta;
+}
+
 
 cx_mat ApplyGate(cx_mat rho, u_gate gate, size_t qubit) {
     size_t qubit_count = ceil(log2(rho.n_rows));

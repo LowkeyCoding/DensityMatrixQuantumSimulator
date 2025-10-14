@@ -8,6 +8,7 @@
 using namespace std;
 using namespace arma;
 
+bool IsPure(cx_mat rho, double delta);
 cx_mat BinaryStringToDensityMatrix(const string bin);
 cx_mat ApplyGateToDensityMatrix(cx_mat matrix, cx_mat gate);
 cx_mat ApplyGate(cx_mat rho, u_gate gate, size_t qubit);
