@@ -18,15 +18,15 @@ extern "C" void UAmplitudeDampeningAndDephasing(double* rho, int rho_size, doubl
 
 extern "C" void UMeasureAll(double* rho, int rho_size, double* random_values, int* res, int smaple_count) {
     vector<double> rv = vector<double>(random_values, (random_values + sizeof(double)*smaple_count));    
-    vector<int> vres = Sample(ToMatrix(rho,rho_size), rv);
-    for(size_t i = 0; i < vres.size(); i++) {
-        res[i] = vres[i];
+    for(int i = 0; i < smaple_count; i++) {
+        res[i] = Sample(ToMatrix(rho,rho_size),rv[i]);
     }
 }
 
 void FromMatrix(cx_mat matrix, double* ret, int size){
     cx_double* result = matrix.memptr();
-    for (int i = 0; i < size*size; i++)
+    int mat_row = size*2;
+    for (int i = 0; i < mat_row*mat_row; i++)
     {
         ret[2*i] = result[i].real();
         ret[2*i+1] = result[i].imag(); 
@@ -34,10 +34,11 @@ void FromMatrix(cx_mat matrix, double* ret, int size){
 }
 
 cx_mat ToMatrix(double* matrix, int size){
-    std::vector<cx_double> test = std::vector<cx_double>(size*size);
-    for (int i = 0; i < size*size; i++)
+    int mat_row = size*2;
+    auto test = vector<cx_double>(mat_row*mat_row);
+    for (int i = 0; i < mat_row*mat_row; i++)
     {
         test[i] = cx_double(matrix[i*2], matrix[i*2+1]); 
     }
-    return cx_mat(&test[0],size,size, true,true);
+    return cx_mat(&test[0],mat_row,mat_row, true,true);
 }

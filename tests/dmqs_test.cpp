@@ -81,9 +81,6 @@ TEST_CASE("Controlled Gates Test") {
     SUBCASE("Controled Z Gate ") {
         auto CZ12_T1 = ApplyGateToDensityMatrix(states["10"], CG(Y(), 1, 2));
         auto CZ12_F1 = ApplyGateToDensityMatrix(states["10"], CG(Z(), 1, 2));
-        cout << states["10"] << endl;
-        cout << CZ12_T1 << endl;
-        cout << CZ12_F1 << endl;
     }
     SUBCASE("q2 > q1") {
         auto C21_T1 = ApplyGateToDensityMatrix(states["11"], CG(X(), 2, 1));
@@ -152,8 +149,8 @@ TEST_CASE("Sample Bell State"){
     vector<double> random = {0.31139488122381065,0.706346140299032,0.0811185803790464,0.8431768096973808,0.9705136993318086,0.8775436953654865,0.6858954365356232,0.18346957566198463,0.2716272931656005,0.8928967556999657,};
     size_t counts[] = {0,0,0,0};
     size_t pre_counts[] = {4,0,0,6};
-    for (size_t v : Sample(rho,random)) {
-       counts[v] += 1;
+    for(int i = 0; i < 10; i++){
+        counts[Sample(rho,random[i])] +=1;
     }
     for(size_t i = 0; i < 4; i++) {
         CHECK(pre_counts[i] == counts[i]);

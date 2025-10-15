@@ -152,26 +152,36 @@ vector<double> GetPropabilities(cx_mat rho) {
 /// @brief Gets a sample from the density matrix for each random value provided.
 /// @param rho Density matrix to sample from.
 /// @return A vector of samples from the density matrix.
-vector<int32_t> Sample(cx_mat rho, vector<double> random_values) {
-    vector<int32_t> samples;
-    vector<double> weights = GetPropabilities(rho);
-    samples.reserve(random_values.size());
-    
-    // Precompute cumulative distribution once
-    vector<double> cumulative(weights.size());
-    partial_sum(weights.begin(), weights.end(), cumulative.begin());
-    double total = cumulative.back();
-    for (double& val : cumulative) {
-        val /= total;
+int Sample(const cx_mat rho, double random_value) {
+    // Validate input
+    if (rho.n_rows != rho.n_cols) {
+        throw invalid_argument("Density matrix must be square");
     }
     
-    // Sample for each random value
-    for (double r : random_values) {
-        auto it = lower_bound(cumulative.begin(), cumulative.end(), r);
-        samples.push_back(distance(cumulative.begin(), it));
+    if (random_value < 0.0 || random_value >= 1.0) {
+        throw invalid_argument("Random value must be in [0, 1)");
     }
     
-    return samples;
+    // Diagonalize the density matrix to get eigenvalues (probabilities)
+    vec eigval = abs(rho.diag());
+
+    // Ensure eigenvalues are non-negative (probabilities)
+    if (any(eigval < -1e-10)) {
+        throw invalid_argument("Density matrix has negative eigenvalues");
+    }
+
+    // Cumulative distribution for sampling
+    vec cumulative = cumsum(eigval);
+
+    // Sample based on the random value
+    for (uword i = 0; i < cumulative.n_elem; ++i) {
+        if (random_value < cumulative(i)) {
+            return static_cast<int>(i);
+        }
+    }
+    
+    // Fallback: return last index (shouldn't happen if random_value < 1.0)
+    return static_cast<int>(cumulative.n_elem - 1);
 }
 
 /// @brief Applies amplitude dampening and dephasing channel as seen in: 10.1098/rspa.2008.0439
