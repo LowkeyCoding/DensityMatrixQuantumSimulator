@@ -1,4 +1,4 @@
-#include "dmqs.h"
+#include "dmqs.hpp"
 
 /// @brief Takes a binary string and converts it size_to a density matrix with the basis state 01
 /// @param bin A binary string e.g "0101"
@@ -88,28 +88,6 @@ cx_mat ApplyGate(cx_mat rho, u_gate gate, size_t qubit) {
             break;
     }
     return ApplyGateToDensityMatrix(rho, GateToNQubitSystem(U,qubit,qubit_count));
-}
-
-/// @brief Checks equality between two density matrixes
-/// @param rho1 First density matrix
-/// @param rho2 Second density matrix
-/// @param delta Maximum difference allowed for equality 
-/// @return Whether the two density matrixes are equal
-bool DensityMatrixApproxEq(cx_mat rho1, cx_mat rho2, double delta) {
-    assert(rho1.n_rows == rho2.n_rows);
-    assert(rho1.n_cols == rho2.n_cols);
-    assert(rho1.n_cols == rho2.n_rows);
-    for(size_t i = 0; i < rho1.n_rows; i++) {
-        for(size_t j = 0; j < rho1.n_cols; j++){
-            if ((rho1.at(i,j).real() - rho2.at(i,j).real()) > delta ) {
-                return false;
-            } 
-            if ((rho1.at(i,j).imag() - rho2.at(i,j).imag()) > delta ) {
-                return false;
-            } 
-        }
-    }
-    return true;
 }
 
 size_t rearrangeBits(size_t i, vector<size_t> a) {

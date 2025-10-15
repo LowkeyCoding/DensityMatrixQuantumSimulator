@@ -1,14 +1,13 @@
+#pragma once
 #include <vector>
 #include <cmath>
 #include <complex>
 #include <armadillo>
 #include <cassert>
-#include "gates.h"
+#include "gates/gates.hpp"
 
 using namespace std;
 using namespace arma;
-#ifndef DMQS_H
-#define DMQS_H
 
 bool IsPure(cx_mat rho, double delta);
 cx_mat BinaryStringToDensityMatrix(const string bin);
@@ -19,6 +18,3 @@ cx_mat ApplyAmplitudeDampeningAndDephasing(cx_mat rho, double* T1, double* T2, d
 cx_mat PartialTrace(cx_mat rho, vector<size_t> targets);
 vector<int32_t> Sample(cx_mat rho, vector<double> random_values);
 size_t rearrangeBits(size_t i, vector<size_t> a);
-bool DensityMatrixApproxEq(cx_mat d1, cx_mat d2, double delta);
-
-#endif

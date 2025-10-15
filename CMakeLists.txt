@@ -2,25 +2,20 @@ cmake_minimum_required(VERSION 3.15)
 project(DensityMatrixQuantumSimulator)
 
 option(DMQS_TESTS "DMQSUnit Test" TRUE)
+option(GATES_TESTS "GATESUnit Test" TRUE)
+option(UPPAAL_TESTS "UPPAALUnit Test" TRUE)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 set(CMAKE_CXX_STANDARD_EXTENSIONS FALSE)
 
+# Global compile options
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wpedantic -Wall -Wextra")
+
 find_package(Armadillo REQUIRED)
 find_package(spdlog REQUIRED)
 
-add_library(external SHARED gates.cpp dmqs.cpp uppaal.cpp)
-target_compile_features(external PRIVATE cxx_std_23)
-target_compile_options(external PUBLIC -Wpedantic -Wall -Wextra)
-target_link_libraries(external PUBLIC armadillo spdlog)
-
-
-if (DMQS_TESTS)
-  add_executable(dmqs_test dmqs_test.cpp)
-  target_link_libraries(dmqs_test external)
-  add_custom_command(
-    TARGET dmqs_test
-    POST_BUILD
-    COMMAND dmqs_test
-  )
-endif(DMQS_TESTS)
+# Add subdirectories
+add_subdirectory(src)
+add_subdirectory(bindings)
+add_subdirectory(tests)

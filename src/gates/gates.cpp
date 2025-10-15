@@ -1,8 +1,8 @@
-#include "gates.h"
+#include "gates.hpp"
 
 /// @brief Basis state |0⟩
 cx_mat B0(){
-     cx_mat::fixed<2, 2> gate = {
+    static const cx_mat::fixed<2, 2> gate = {
         cx_double(1,0),cx_double(0,0),
         cx_double(0,0),cx_double(0,0)
     };
@@ -11,7 +11,7 @@ cx_mat B0(){
 
 /// @brief Basis state |1⟩
 cx_mat B1(){
-     cx_mat::fixed<2, 2> gate = {
+    static const cx_mat::fixed<2, 2> gate = {
         cx_double(0,0),cx_double(0,0),
         cx_double(0,0),cx_double(1,0),
     };
@@ -20,7 +20,7 @@ cx_mat B1(){
 
 /// @brief Identity gate
 cx_mat Id() {
-    cx_mat::fixed<2, 2> gate = {
+    static const cx_mat::fixed<2, 2> gate = {
         cx_double(1,0),cx_double(0,0),
         cx_double(0,0),cx_double(1,0),
     };
@@ -33,7 +33,7 @@ cx_mat Id(int n) {
 
 /// @brief X gate
 cx_mat X() {
-    cx_mat::fixed<2, 2> gate = {
+    static const cx_mat::fixed<2, 2> gate = {
         cx_double(0,0),cx_double(1,0),
         cx_double(1,0),cx_double(0,0),
     };
@@ -42,7 +42,7 @@ cx_mat X() {
 
 /// @brief Y gate 
 cx_mat Y() {
-    cx_mat::fixed<2, 2> gate = {
+    static const cx_mat::fixed<2, 2> gate = {
         cx_double(0,0),cx_double(0,-1),
         cx_double(0,1),cx_double(0,0),
     };
@@ -51,7 +51,7 @@ cx_mat Y() {
 
 /// @brief Z gate 
 cx_mat Z() {
-    cx_mat::fixed<2, 2> gate = {
+    static const cx_mat::fixed<2, 2> gate = {
         cx_double(1,0),cx_double(0,0),
         cx_double(0,0),cx_double(-1,0),
     };
@@ -60,7 +60,7 @@ cx_mat Z() {
 
 /// @brief Hadamard gate 
 cx_mat H() {
-    cx_mat::fixed<2, 2> gate = {
+    static const cx_mat::fixed<2, 2> gate = {
         cx_double(1/sqrt(2),0),cx_double(1/sqrt(2),0),
         cx_double(1/sqrt(2),0),cx_double(-(1/sqrt(2)),0),
     };
@@ -69,7 +69,7 @@ cx_mat H() {
 
 /// @brief Controlled X gate 
 cx_mat CX() {
-    cx_mat::fixed<4, 4> gate = {
+    static const cx_mat::fixed<4, 4> gate = {
         cx_double(1,0),cx_double(0,0), cx_double(0,0),cx_double(0,0),
         cx_double(0,0),cx_double(1,0), cx_double(0,0),cx_double(0,0),
         cx_double(0,0),cx_double(0,0), cx_double(0,0),cx_double(1,0),
@@ -86,7 +86,7 @@ cx_mat RX(double theta){
         cx_double(cos(theta_r/2),0), cx_double(0,-sin(theta_r)),
         cx_double(0,-sin(theta_r/2)), cx_double(cos(theta_r/2),0)
     };
-    return rx_theta.reshape(2,2);
+    return rx_theta;
 }
 
 
@@ -141,4 +141,26 @@ cx_mat CG(cx_mat gate, int control, int target) {
     }
 
     return mat_control + mat_target;
+}
+
+/// @brief Checks equality between two density matrixes
+/// @param rho1 First density matrix
+/// @param rho2 Second density matrix
+/// @param delta Maximum difference allowed for equality 
+/// @return Whether the two density matrixes are equal
+bool DensityMatrixApproxEq(cx_mat rho1, cx_mat rho2, double delta) {
+    assert(rho1.n_rows == rho2.n_rows);
+    assert(rho1.n_cols == rho2.n_cols);
+    assert(rho1.n_cols == rho2.n_rows);
+    for(size_t i = 0; i < rho1.n_rows; i++) {
+        for(size_t j = 0; j < rho1.n_cols; j++){
+            if ((rho1.at(i,j).real() - rho2.at(i,j).real()) > delta ) {
+                return false;
+            } 
+            if ((rho1.at(i,j).imag() - rho2.at(i,j).imag()) > delta ) {
+                return false;
+            } 
+        }
+    }
+    return true;
 }

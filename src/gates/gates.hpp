@@ -1,8 +1,8 @@
-
+#pragma once
 #include <armadillo>
+#include <cassert>
 using namespace arma;
-#ifndef GATES_H
-#define GATES_H
+
 enum u_gate {
   GId,
   GX,
@@ -12,7 +12,8 @@ enum u_gate {
   GCX,
   GB0,
   GB1,
-}; 
+};
+
 cx_mat X();
 cx_mat CX();
 cx_mat Y();
@@ -26,4 +27,5 @@ cx_mat RX(double theta);
 cx_mat RY(double theta);
 cx_mat RZ(double theta);
 cx_mat CG(cx_mat gate, int q1, int q2);
-#endif
+
+bool DensityMatrixApproxEq(cx_mat rho1, cx_mat rho2, double delta);

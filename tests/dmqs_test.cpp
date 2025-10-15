@@ -1,8 +1,7 @@
-#include "dmqs.h"
-#include "uppaal.h"
-#include "gates.h"
+#include "../src/dmqs.hpp"
+#include "../src/gates/gates.hpp"
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-#include "doctest.h"
+#include "../libs/doctest.h"
 
 
 TEST_CASE("Test generating state from binary string") {
