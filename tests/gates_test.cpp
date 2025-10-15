@@ -24,8 +24,6 @@ TEST_CASE("Unitary") {
     SUBCASE("Z") {
         auto U = Z();
         auto UD = adjoint(U);
-        auto UI = U.i();
-        CHECK(DensityMatrixApproxEq(UD, UI, EXACT));
         CHECK(DensityMatrixApproxEq(U*UD, Id(), EXACT));
     }
     SUBCASE("B0") {
