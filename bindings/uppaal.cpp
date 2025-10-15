@@ -1,7 +1,7 @@
 #include "uppaal.h"
 
 extern "C" void UInitBinState(double* rho, int rho_size, const char* state) {
-    assert(size_t(ceil(rho_size/2)) == strlen(state));
+    assert(size_t(rho_size) == strlen(state));
     cx_mat res = BinaryStringToDensityMatrix(state);
     FromMatrix(res, rho, rho_size);
 }
@@ -24,7 +24,7 @@ extern "C" void UMeasureAll(double* rho, int rho_size, double* random_values, in
     }
 }
 
-extern "C" void FromMatrix(cx_mat matrix, double* ret, int size){
+void FromMatrix(cx_mat matrix, double* ret, int size){
     cx_double* result = matrix.memptr();
     for (int i = 0; i < size*size; i++)
     {
@@ -34,13 +34,10 @@ extern "C" void FromMatrix(cx_mat matrix, double* ret, int size){
 }
 
 cx_mat ToMatrix(double* matrix, int size){
-    cx_double test[size*size];
+    std::vector<cx_double> test = std::vector<cx_double>(size*size);
     for (int i = 0; i < size*size; i++)
     {
         test[i] = cx_double(matrix[i*2], matrix[i*2+1]); 
     }
-    
-    cx_mat test2 = cx_mat(test,size,size, true,true);
-
-    return test2;
+    return cx_mat(&test[0],size,size, true,true);
 }

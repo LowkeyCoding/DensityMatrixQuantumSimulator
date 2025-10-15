@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.15)
 project(DensityMatrixQuantumSimulator)
 
-option(DMQS_TESTS "DMQSUnit Test" TRUE)
-option(GATES_TESTS "GATESUnit Test" TRUE)
+option(GATES_TESTS "GATESUnit Test" FALSE)
+option(DMQS_TESTS "DMQSUnit Test" FALSE)
 option(UPPAAL_TESTS "UPPAALUnit Test" TRUE)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)

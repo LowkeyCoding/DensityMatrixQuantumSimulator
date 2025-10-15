@@ -1,5 +1,4 @@
 #include "../src/dmqs.hpp"
-#include "../src/gates/gates.hpp"
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "../libs/doctest.h"
 
