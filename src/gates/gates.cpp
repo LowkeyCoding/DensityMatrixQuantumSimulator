@@ -81,10 +81,11 @@ cx_mat CX() {
 /// @param theta Angle in degrees
 /// @return RX gate with a rotation theta
 cx_mat RX(double theta){
-    double theta_r = (theta / 180.0 * M_PI) / 2; // Half the radians of theta
+    double theta_r = theta * M_PI / 180.0 / 2.0; // Convert to half radians
+    
     cx_mat::fixed<2,2> rx_theta = {
-        cx_double(cos(theta_r/2),0), cx_double(0,-sin(theta_r)),
-        cx_double(0,-sin(theta_r/2)), cx_double(cos(theta_r/2),0)
+        cx_double(cos(theta_r), 0), cx_double(0, -sin(theta_r)),
+        cx_double(0, -sin(theta_r)), cx_double(cos(theta_r), 0)
     };
     return rx_theta;
 }
@@ -94,22 +95,22 @@ cx_mat RX(double theta){
 /// @param theta Angle in degrees
 /// @return RY gate with a rotation theta
 cx_mat RY(double theta){
-    double theta_r = (theta / 180.0 * M_PI) / 2; // Half the radians of theta
+    double theta_r = (theta / 180.0 * M_PI) / 2.0; // Convert to half radians
     cx_mat::fixed<2,2> ry_theta = {
-        cx_double(cos(theta_r/2),0), cx_double(-sin(theta_r),0),
-        cx_double(sin(theta_r/2),0), cx_double(cos(theta_r/2),0)
+        cx_double(cos(theta_r),0), cx_double(-sin(theta_r),0),
+        cx_double(sin(theta_r),0), cx_double(cos(theta_r),0)
     };
-    return ry_theta.reshape(2,2);
+    return ry_theta;
 }
 
 /// @brief RZ gate (Rotates the bloch sphere theta degrees around the Z axis)
 /// @param theta Angle in degrees
 /// @return RZ gate with a rotation theta
 cx_mat RZ(double theta){
-    double theta_r = (theta / 180.0 * M_PI) / 2; // Half the radians of theta
+    double theta_r = (theta / 180.0 * M_PI) / 2.0; // Convert to half radians
     cx_mat::fixed<2,2> rz_theta = {
-        cx_double(cos(theta_r/2),-sin(theta_r/2)), cx_double(0,0),
-        cx_double(0,0), cx_double(cos(theta_r/2),sin(theta_r/2))
+        std::exp(cx_double(0, -theta_r)), cx_double(0,0),
+        cx_double(0,0), std::exp(cx_double(0, theta_r)),
     };
     return rz_theta;
 }
@@ -141,6 +142,13 @@ cx_mat CG(cx_mat gate, int control, int target) {
     }
 
     return mat_control + mat_target;
+}
+
+/// @brief Hermitian adjoint (dagger)
+/// @param M The input matrix 
+/// @return M^†
+cx_mat adjoint(const cx_mat M) { 
+    return conj(M).st(); 
 }
 
 /// @brief Checks equality between two density matrixes
