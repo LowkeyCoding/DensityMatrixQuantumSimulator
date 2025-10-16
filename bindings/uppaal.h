@@ -1,12 +1,14 @@
 #include "../src/dmqs.hpp"
+#include <cstdlib>
 #ifndef UPPAAL_H
 #define UPPAAL_H
 
 cx_mat ToMatrix(double* matrix, int size);
 void FromMatrix(cx_mat matrix, double* ret, int size);
 
-extern "C" void UInitBinState(double* rho, int rho_size, const char* state);
-extern "C" void UMeasureAll(double* rho, int rho_size, double* random_values, int* res, int smaple_count);
+extern "C" void UInitBinState(double* rho, int rho_size, int* state);
+extern "C" void UMeasureAllS(double* rho, int rho_size, double* random_values, int* res, int smaple_count);
+extern "C" int UMeasureAll(double* rho, int rho_size, double random_value);
 extern "C" void UApplyGate(double* rho, int rho_size, int gate, int target);
 extern "C" void UAmplitudeDampeningAndDephasing(double* rho, int rho_size, double* T1, double* T2, double t);
 

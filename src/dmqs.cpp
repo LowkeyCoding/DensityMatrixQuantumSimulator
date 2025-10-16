@@ -159,7 +159,7 @@ int Sample(const cx_mat rho, double random_value) {
     }
     
     if (random_value < 0.0 || random_value >= 1.0) {
-        throw invalid_argument("Random value must be in [0, 1)");
+        throw invalid_argument("Random value must be in [0, 1]");
     }
     
     // Diagonalize the density matrix to get eigenvalues (probabilities)

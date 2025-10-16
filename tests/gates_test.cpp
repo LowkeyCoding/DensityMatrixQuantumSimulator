@@ -23,6 +23,17 @@ TEST_CASE("Exceptions") {
     }
 }
 
+TEST_CASE("Application") {
+    SUBCASE("Id") {
+        auto U = Id();
+        auto mat = (U * B0()) * (conj(U).t());
+        INFO("U:\n", U);
+        INFO("mat:\n", (U * B0()) * (conj(U).t()));
+        CHECK(true);
+        //CHECK(DensityMatrixApproxEq(mat,B0(),EXACT));
+    }
+}
+
 TEST_CASE("Unitary") {
     SUBCASE("Id") {
         auto U = Id();

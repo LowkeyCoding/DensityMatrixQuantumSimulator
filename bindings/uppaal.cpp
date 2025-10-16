@@ -1,8 +1,13 @@
 #include "uppaal.h"
+#include <iostream>
+#include <fstream>
+extern "C" void UInitBinState(double* rho, int rho_size, int state[]) {
+    //assert(size_t(rho_size) == strlen(state));
+    std::string str;
+    for(int i =0;i<rho_size;++i)
+      str.push_back('0'+state[i]);
 
-extern "C" void UInitBinState(double* rho, int rho_size, const char* state) {
-    assert(size_t(rho_size) == strlen(state));
-    cx_mat res = BinaryStringToDensityMatrix(state);
+    cx_mat res = BinaryStringToDensityMatrix(str);
     FromMatrix(res, rho, rho_size);
 }
 
@@ -12,15 +17,30 @@ extern "C" void UApplyGate(double* rho, int rho_size, int gate, int target) {
 }
 
 extern "C" void UAmplitudeDampeningAndDephasing(double* rho, int rho_size, double* T1, double* T2, double t){
-    cx_mat res = ApplyAmplitudeDampeningAndDephasing(ToMatrix(rho,rho_size), T1,T2, t);
+    auto in_mat = ToMatrix(rho,rho_size);
+    cx_mat res = ApplyAmplitudeDampeningAndDephasing(in_mat, T1,T2, t);
+    ofstream myfile;
+    myfile.open("/home/lokew/Documents/code/DensityMatrixQuantumSimulator/log.txt");
+    myfile << "Input matrix: \n";
+    myfile << in_mat << "\n";
+    myfile << "T1:" << T1[0] << "," << T1[2] << "\n";
+    myfile << "T2:" << T2[0] << "," << T2[2] << "\n";
+    myfile << "t:" << t << "\n";
+    myfile << "Noisy matrix:\n";
+    myfile << res << "\n";
+    myfile.close();
     FromMatrix(res, rho, rho_size);
 }
 
-extern "C" void UMeasureAll(double* rho, int rho_size, double* random_values, int* res, int smaple_count) {
+extern "C" void UMeasureAllS(double* rho, int rho_size, double* random_values, int* res, int smaple_count) {
     vector<double> rv = vector<double>(random_values, (random_values + sizeof(double)*smaple_count));    
     for(int i = 0; i < smaple_count; i++) {
         res[i] = Sample(ToMatrix(rho,rho_size),rv[i]);
     }
+}
+
+extern "C" int UMeasureAll(double* rho, int rho_size, double random_value) {
+    return Sample(ToMatrix(rho,rho_size),random_value);
 }
 
 void FromMatrix(cx_mat matrix, double* ret, int size){
