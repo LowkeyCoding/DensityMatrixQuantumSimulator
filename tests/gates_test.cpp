@@ -5,6 +5,24 @@
 #define EXACT 0.0
 #define DEC14 1e-14
 
+TEST_CASE("Exceptions") {
+    SUBCASE("Id"){
+        REQUIRE_THROWS_WITH(Id(0), doctest::Contains("N must be at least 1"));
+        REQUIRE_THROWS_WITH(Id(-1), doctest::Contains("N must be at least 1"));
+        REQUIRE_THROWS_WITH(Id(-1321), doctest::Contains("N must be at least 1"));
+    }
+    SUBCASE("CG") {
+        for(int i = 0; i < 10; i++){
+            REQUIRE_THROWS_WITH(CG(X(), i,i), doctest::Contains("qubit must be different"));
+        }
+    }
+    SUBCASE("SWAP") {
+        for(int i = 0; i < 10; i++){
+            REQUIRE_THROWS_WITH(SWAP( i,i), doctest::Contains("The qubits to swap"));
+        }
+    }
+}
+
 TEST_CASE("Unitary") {
     SUBCASE("Id") {
         auto U = Id();
@@ -42,7 +60,7 @@ TEST_CASE("Unitary") {
         CHECK(DensityMatrixApproxEq(U*UD, Id(2), EXACT));
     }
     SUBCASE("Id(n)") {
-        for(int i = 0; i < 10; i++){
+        for(int i = 1; i < 10; i++){
             auto U = Id(i);
             auto UD = adjoint(U);
             CHECK(DensityMatrixApproxEq(U*UD, Id(i), EXACT));
@@ -78,6 +96,34 @@ TEST_CASE("Unitary") {
             INFO("RZ(",ok,")† is : ", UD);
             INFO("RZ(",ok,")*RZ(",ok,") is : ", U*UD);
             CHECK(approx_equal(U*UD, Id(), "absdiff", DEC14));
+        }
+    }
+    SUBCASE("CX(x,y)") {
+        for(int i = 0; i < 2; i++) {
+            for(int j = 0; j < 2; j++) {
+                if (i != j){
+                    auto U = CG(X(),i,j);
+                    auto UD = adjoint(U);
+                    auto RU = CG(X(),j,i);
+                    auto RUD = adjoint(RU);
+                    CHECK(approx_equal(U*UD, Id(int(ceil(log2(U.n_rows)))), "absdiff", DEC14));
+                    CHECK(approx_equal(RU*RUD, Id(int(ceil(log2(U.n_rows)))), "absdiff", DEC14));
+                }
+            }
+        }
+    }
+    SUBCASE("SWAP(x,y)") {
+        for(int i = 0; i < 2; i++) {
+            for(int j = 0; j < 2; j++) {
+                if (i != j){
+                    auto U = SWAP(i,j);
+                    auto UD = adjoint(U);
+                    auto RU = SWAP(j,i);
+                    auto RUD = adjoint(RU);
+                    CHECK(approx_equal(U*UD, Id(int(ceil(log2(U.n_rows)))), "absdiff", DEC14));
+                    CHECK(approx_equal(RU*RUD, Id(int(ceil(log2(U.n_rows)))), "absdiff", DEC14));
+                }
+            }
         }
     }
 }

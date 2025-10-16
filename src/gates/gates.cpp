@@ -28,6 +28,9 @@ cx_mat Id() {
 }
 
 cx_mat Id(int n) {
+    if(n < 1) {
+        throw invalid_argument("N must be at least 1 when generating a Id gate");
+    }
     return cx_mat(pow(2,n),pow(2,n),fill::eye);
 }
 
@@ -121,6 +124,9 @@ cx_mat RZ(double theta){
 /// @param target
 /// @return Controlled gate
 cx_mat CG(cx_mat gate, int control, int target) {
+    if(control == target) {
+        throw invalid_argument("Control and target qubit must be different");
+    }
     cx_mat mat_control = B0();
     cx_mat mat_target = B1();
     int dist_between_qubits = abs(control-target);
@@ -142,6 +148,17 @@ cx_mat CG(cx_mat gate, int control, int target) {
     }
 
     return mat_control + mat_target;
+}
+
+/// @brief SWAP Gate
+/// @param q1 The index of the first qubit
+/// @param q2 The index of the second qubit
+/// @return A swap gate that swaps the value of q1 abd q2.
+cx_mat SWAP(int q1, int q2) {
+    if(q1 == q2) {
+        throw invalid_argument("The qubits to swap has to be different");
+    }
+    return CG(X(),q1,q2) * CG(X(),q2,q1) * CG(X(),q1,q2);
 }
 
 /// @brief Hermitian adjoint (dagger)
