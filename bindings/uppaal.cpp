@@ -1,13 +1,9 @@
 #include "uppaal.h"
 #include <iostream>
 #include <fstream>
-extern "C" void UInitBinState(double* rho, int rho_size, int state[]) {
-    //assert(size_t(rho_size) == strlen(state));
-    std::string str;
-    for(int i =0;i<rho_size;++i)
-      str.push_back('0'+state[i]);
-
-    cx_mat res = BinaryStringToDensityMatrix(str);
+extern "C" void UInitBinState(double* rho, int rho_size, const char* state) {
+    assert(size_t(rho_size) == strlen(state));
+    cx_mat res = BinaryStringToDensityMatrix(state);
     FromMatrix(res, rho, rho_size);
 }
 
