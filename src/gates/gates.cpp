@@ -173,19 +173,6 @@ cx_mat adjoint(const cx_mat M) {
 /// @param rho2 Second density matrix
 /// @param delta Maximum difference allowed for equality 
 /// @return Whether the two density matrixes are equal
-bool DensityMatrixApproxEq(cx_mat rho1, cx_mat rho2, double delta) {
-    assert(rho1.n_rows == rho2.n_rows);
-    assert(rho1.n_cols == rho2.n_cols);
-    assert(rho1.n_cols == rho2.n_rows);
-    for(size_t i = 0; i < rho1.n_rows; i++) {
-        for(size_t j = 0; j < rho1.n_cols; j++){
-            if ((rho1.at(i,j).real() - rho2.at(i,j).real()) > delta ) {
-                return false;
-            } 
-            if ((rho1.at(i,j).imag() - rho2.at(i,j).imag()) > delta ) {
-                return false;
-            } 
-        }
-    }
-    return true;
+bool mat_eq(cx_mat rho1, cx_mat rho2, double delta) {
+    return approx_equal(rho1,rho2,"absdiff", delta);
 }

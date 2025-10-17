@@ -27,43 +27,47 @@ TEST_CASE("Unitary") {
     SUBCASE("Id") {
         auto U = Id();
         auto UD = adjoint(U);
-        CHECK(DensityMatrixApproxEq(U*UD, Id(), EXACT));
+        CHECK(mat_eq(U*UD, Id(), EXACT));
     }
     SUBCASE("X") {
         auto U = X();
         auto UD = adjoint(U);
-        CHECK(DensityMatrixApproxEq(U*UD, Id(), EXACT));
+        CHECK(mat_eq(U*UD, Id(), EXACT));
     }
     SUBCASE("Y") {
         auto U = Y();
         auto UD = adjoint(U);
-        CHECK(DensityMatrixApproxEq(U*UD, Id(), EXACT));
+        CHECK(mat_eq(U*UD, Id(), EXACT));
     }
     SUBCASE("Z") {
         auto U = Z();
         auto UD = adjoint(U);
-        CHECK(DensityMatrixApproxEq(U*UD, Id(), EXACT));
+        CHECK(mat_eq(U*UD, Id(), EXACT));
     }
     SUBCASE("B0") {
         auto U = B0();
         auto UD = adjoint(U);
-        CHECK(DensityMatrixApproxEq(U*UD, Id(), EXACT));
+        INFO("B0 * d\n",U*UD);
+        INFO("id\n",Id());
+        CHECK_FALSE(mat_eq(U*UD, Id(), EXACT));
     }
     SUBCASE("B1") {
         auto U = B1();
         auto UD = adjoint(U);
-        CHECK(DensityMatrixApproxEq(U*UD, Id(), EXACT));
+        INFO("B1 * d\n",U*UD);
+        INFO("id \n",Id());
+        CHECK_FALSE(mat_eq(U*UD, Id(), EXACT));
     }
     SUBCASE("CX") {
         auto U = CX();
         auto UD = adjoint(U);
-        CHECK(DensityMatrixApproxEq(U*UD, Id(2), EXACT));
+        CHECK(mat_eq(U*UD, Id(2), EXACT));
     }
     SUBCASE("Id(n)") {
         for(int i = 1; i < 10; i++){
             auto U = Id(i);
             auto UD = adjoint(U);
-            CHECK(DensityMatrixApproxEq(U*UD, Id(i), EXACT));
+            CHECK(mat_eq(U*UD, Id(i), EXACT));
         }
     }
 
@@ -75,7 +79,7 @@ TEST_CASE("Unitary") {
             INFO("RX(",ok,") is : ", U);
             INFO("RX(",ok,")† is : ", UD);
             INFO("RX(",ok,")*RX(",ok,") is : ", U*UD);
-            CHECK(approx_equal(U*UD, Id(), "absdiff", DEC14));
+            CHECK(mat_eq(U*UD, Id(), DEC14));
         }
     }
     SUBCASE("RY(theta)") {
@@ -85,7 +89,7 @@ TEST_CASE("Unitary") {
             INFO("RY(",ok,") is : ", U);
             INFO("RY(",ok,")† is : ", UD);
             INFO("RY(",ok,")*RY(",ok,") is : ", U*UD);
-            CHECK(approx_equal(U*UD, Id(), "absdiff", DEC14));
+            CHECK(mat_eq(U*UD, Id(), DEC14));
         }
     }
     SUBCASE("RZ(theta)") {
@@ -95,7 +99,7 @@ TEST_CASE("Unitary") {
             INFO("RZ(",ok,") is : ", U);
             INFO("RZ(",ok,")† is : ", UD);
             INFO("RZ(",ok,")*RZ(",ok,") is : ", U*UD);
-            CHECK(approx_equal(U*UD, Id(), "absdiff", DEC14));
+            CHECK(mat_eq(U*UD, Id(), DEC14));
         }
     }
     SUBCASE("CX(x,y)") {
@@ -106,8 +110,8 @@ TEST_CASE("Unitary") {
                     auto UD = adjoint(U);
                     auto RU = CG(X(),j,i);
                     auto RUD = adjoint(RU);
-                    CHECK(approx_equal(U*UD, Id(int(ceil(log2(U.n_rows)))), "absdiff", DEC14));
-                    CHECK(approx_equal(RU*RUD, Id(int(ceil(log2(U.n_rows)))), "absdiff", DEC14));
+                    CHECK(mat_eq(U*UD, Id(int(ceil(log2(U.n_rows)))), DEC14));
+                    CHECK(mat_eq(RU*RUD, Id(int(ceil(log2(U.n_rows)))), DEC14));
                 }
             }
         }
@@ -120,8 +124,8 @@ TEST_CASE("Unitary") {
                     auto UD = adjoint(U);
                     auto RU = SWAP(j,i);
                     auto RUD = adjoint(RU);
-                    CHECK(approx_equal(U*UD, Id(int(ceil(log2(U.n_rows)))), "absdiff", DEC14));
-                    CHECK(approx_equal(RU*RUD, Id(int(ceil(log2(U.n_rows)))), "absdiff", DEC14));
+                    CHECK(mat_eq(U*UD, Id(int(ceil(log2(U.n_rows)))), DEC14));
+                    CHECK(mat_eq(RU*RUD, Id(int(ceil(log2(U.n_rows)))), DEC14));
                 }
             }
         }

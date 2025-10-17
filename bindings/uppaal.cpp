@@ -11,16 +11,19 @@ extern "C" void UApplyGate(double* rho, int rho_size, int gate, int target) {
     FromMatrix(res, rho, rho_size);
 }
 
-extern "C" void UAmplitudeDampeningAndDephasing(double* rho, int rho_size, double* T1, double* T2, double t){
-    cx_mat res = ApplyAmplitudeDampeningAndDephasing(ToMatrix(rho,rho_size), T1,T2, t);
+extern "C" void UApplyCGate(double* rho, int rho_size, int gate, int target, int control) {
+    cx_mat res = ApplyCGate(ToMatrix(rho,rho_size), static_cast<u_gate>(gate), target, control);
     FromMatrix(res, rho, rho_size);
 }
 
-extern "C" void UMeasureAll(double* rho, int rho_size, double* random_values, int* res, int smaple_count) {
-    vector<double> rv = vector<double>(random_values, (random_values + sizeof(double)*smaple_count));    
-    for(int i = 0; i < smaple_count; i++) {
-        res[i] = Sample(ToMatrix(rho,rho_size),rv[i]);
-    }
+extern "C" void UAmplitudeDampeningAndDephasing(double* rho, int rho_size, double* T1, double* T2, double t){
+    auto in_mat = ToMatrix(rho,rho_size);
+    cx_mat res = ApplyAmplitudeDampeningAndDephasing(in_mat, T1,T2, t);
+    FromMatrix(res, rho, rho_size);
+}
+
+extern "C" int UMeasureAll(double* rho, int rho_size, double random_value) {
+    return Sample(ToMatrix(rho,rho_size),random_value);
 }
 
 void FromMatrix(cx_mat matrix, double* ret, int size){
