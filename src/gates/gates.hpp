@@ -30,5 +30,5 @@ cx_mat RZ(double theta);
 cx_mat CG(cx_mat gate, int q1, int q2);
 cx_mat SWAP(int q1, int q2);
 
-bool DensityMatrixApproxEq(cx_mat rho1, cx_mat rho2, double delta);
+bool mat_eq(cx_mat rho1, cx_mat rho2, double delta);
 cx_mat adjoint(const cx_mat M);

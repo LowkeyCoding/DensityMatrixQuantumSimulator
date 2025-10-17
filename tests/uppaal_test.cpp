@@ -1,6 +1,8 @@
 #include "../bindings/uppaal.h"
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "../libs/doctest.h"
+#define EXACT 0.0
+#define DEC14 1e-14
 
 TEST_CASE("State intializer"){
     int qubits = 2;
@@ -18,42 +20,13 @@ TEST_CASE("State intializer"){
     double c11[32] = {0};
     c11[30] = 1;
     
-    int temp[] = {0,0};
-    double t1[] = {20,20};
-    double t2[] = {18,18};
-    double t = 200;
-    UInitBinState(r00, qubits, temp);
-    auto mat = ToMatrix(r00, 2);
-    double array[32];
-    FromMatrix(mat, array, 2);
-    UAmplitudeDampeningAndDephasing(array,2, t1, t2, t);
-
-    cout << "Matrix" << endl;
-    cout << mat << endl;
-    int n = sizeof(array) / sizeof(array[0]);
-
-    // Print the array
-    cout << "Array Elements: " << endl;
-    int b = 0;
-    for (int i = 0; i < n; i+=2){
-        cout <<"(" << array[i] << "," << array[i+1] << ") ";
-        if (b  == 3) {
-            cout << endl;
-            b = -1;
-        }
-        b++;
-    }
-    cout << endl;
-    //CHECK(std::equal(std::begin(r00), std::end(r00), std::begin(c00)));
-    temp[0] = 1;
-    /*UInitBinState(r01, qubits, temp);
+    UInitBinState(r00, qubits, "00");
+    CHECK(std::equal(std::begin(r00), std::end(r00), std::begin(c00)));
+    UInitBinState(r01, qubits, "01");
     CHECK(std::equal(std::begin(r01), std::end(r01), std::begin(c01)));
-    temp[0] = 0;
-    temp[1] = 1;
-    UInitBinState(r10, qubits, temp);
+    UInitBinState(r10, qubits, "10");
     CHECK(std::equal(std::begin(r10), std::end(r10), std::begin(c10)));
-    temp[0] = 1;
-    UInitBinState(r11, qubits, temp);
+    UInitBinState(r11, qubits, "11");
     CHECK(std::equal(std::begin(r11), std::end(r11), std::begin(c11)));
     
     SUBCASE("sample states"){
@@ -80,5 +53,4 @@ TEST_CASE("State intializer"){
             CHECK(res3[i] == 3);
         }
     }
-    */
 }
