@@ -1,6 +1,5 @@
 #include "uppaal.h"
-#include <iostream>
-#include <fstream>
+
 extern "C" void UInitBinState(double* rho, int rho_size, const char* state) {
     assert(size_t(rho_size) == strlen(state));
     cx_mat res = BinaryStringToDensityMatrix(state);
