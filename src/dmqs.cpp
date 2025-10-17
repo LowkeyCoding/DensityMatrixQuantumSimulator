@@ -62,6 +62,9 @@ cx_mat ApplyGate(cx_mat rho, u_gate gate, int qubit) {
     int qubit_count = ceil(log2(rho.n_rows));
     cx_mat U;
     switch (gate) {
+        case GID:
+            U = Id();
+            break;
         case GX:
             U = X();
             break;
@@ -70,9 +73,6 @@ cx_mat ApplyGate(cx_mat rho, u_gate gate, int qubit) {
             break;
         case GZ:
             U = Z();
-            break;
-        case GCX:
-            return ApplyGateToDensityMatrix(rho, CX());
             break;
         case GH:
             U = H();
@@ -84,15 +84,46 @@ cx_mat ApplyGate(cx_mat rho, u_gate gate, int qubit) {
             U = B1();
             break;
         default:
-            U = Id();
+            throw invalid_argument("ApplyGate " + to_string((int)gate) + " is an invalid gate");
             break;
     }
     return ApplyGateToDensityMatrix(rho, GateToNQubitSystem(U,qubit,qubit_count));
 }
 
+cx_mat ApplyCGate(cx_mat rho, u_gate gate, int target, int control) {
+    int qubit_count = ceil(log2(rho.n_rows));
+    cx_mat U;
+    switch (gate) {
+        case GCX:
+            U = CG(X(),target,control);
+            break;
+        case GCY:
+            U = CG(Y(),target,control);
+            break;
+        case GCZ:
+            U = CG(Z(),target,control);;
+            break;
+        case GCH:
+            U = CG(H(),target,control);
+            break;
+        default:
+            throw invalid_argument("ApplyCGate " + to_string((int)gate) + " is an invalid gate");
+            break;
+    }
+    if (target > 0){
+        U = kron(Id(target), U);
+    }
+    int diff = int(abs(control - qubit_count)) - 1;
+    if (diff > 0) {
+        U = kron(U,Id(diff));
+    }
+
+    return ApplyGateToDensityMatrix(rho, U);
+}
+
 int rearrangeBits(int i, vector<int> a) {
     int ret = 0;
-    for (int j = 0; j < a.size(); j++){
+    for (size_t j = 0; j < a.size(); j++){
         if (a[j] >= 0) {
             ret |= ((i >> j) & 1) << a[j];
         }
@@ -115,7 +146,7 @@ cx_mat PartialTrace(cx_mat rho, vector<int> targets) {
         tt.push_back(i);
     }
     int offset = 0;
-    for (int i = 0; i < targets.size(); i++) {
+    for (size_t i = 0; i < targets.size(); i++) {
         tt.erase(tt.begin() + targets[i] + offset);
         offset -= 1;
     }
@@ -142,7 +173,7 @@ vector<double> GetPropabilities(cx_mat rho) {
     
     // Convert to real probabilities (diagonal of density matrix should be real and non-negative)
     vector<double> weights(diagonal.n_elem);
-    for (int i = 0; i < diagonal.n_elem; ++i) {
+    for (size_t i = 0; i < diagonal.n_elem; ++i) {
         weights[i] = diagonal(i).real();  // Take real part (imaginary should be zero)
     }
     

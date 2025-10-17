@@ -41,9 +41,9 @@ TEST_CASE("Test generating state from binary string") {
         // TODO: Add more tests
         cx_mat t1 = ApplyGate(c00, GX, 0);
         cx_mat t2 = ApplyGate(c00, GX, 1);
-        cx_mat t3 = ApplyGate(c00, GCX, 0);
-        cx_mat t4 = ApplyGate(c10, GCX, 0);
-        cx_mat t5 = ApplyGate(c11, GCX, 0);
+        cx_mat t3 = ApplyCGate(c00, GCX, 0,1);
+        cx_mat t4 = ApplyCGate(c10, GCX, 0,1);
+        cx_mat t5 = ApplyCGate(c11, GCX, 0,1);
 
         CHECK(mat_eq(t1, c10,EXACT));
         CHECK(mat_eq(t2, c01,EXACT));

@@ -31,26 +31,20 @@ TEST_CASE("State intializer"){
     
     SUBCASE("sample states"){
         double random[20] = {0.0045, 0.7908, 0.9903, 0.1085, 0.8035, 0.6303, 0.2853, 0.1125, 0.3623, 0.5738, 0.9714, 0.1138, 0.9487, 0.3961, 0.0949, 0.0730, 0.3724, 0.5300, 0.9606, 0.8233};
-        int res0[20];
-        int res1[20];
-        int res2[20];
-        int res3[20];
-        UMeasureAllS(r00,qubits, random, res0, 20);
         for (int i = 0; i < 20; i++) {
-            CHECK(res0[i] == 0);
+            CHECK(UMeasureAll(r00,qubits, random[i]) == 0);
         }
     
-        UMeasureAllS(r01,qubits, random, res1, 20);
         for (int i = 0; i < 20; i++) {
-            CHECK(res1[i] == 1);
+            CHECK(UMeasureAll(r01,qubits, random[i]) == 1);
         }
-        UMeasureAllS(r10,qubits, random, res2, 20);
+
         for (int i = 0; i < 20; i++) {
-            CHECK(res2[i] == 2);
+            CHECK(UMeasureAll(r10,qubits, random[i]) == 2);
         }
-        UMeasureAllS(r11,qubits, random, res3, 20);
+
         for (int i = 0; i < 20; i++) {
-            CHECK(res3[i] == 3);
+            CHECK(UMeasureAll(r11,qubits, random[i]) == 3);
         }
     }
 }

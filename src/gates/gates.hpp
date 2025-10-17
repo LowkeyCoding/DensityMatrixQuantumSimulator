@@ -5,12 +5,15 @@ using namespace arma;
 using namespace std;
 
 enum u_gate {
-  GId,
+  GID,
   GX,
   GY,
   GZ,
   GH,
   GCX,
+  GCY,
+  GCZ,
+  GCH,
   GB0,
   GB1,
 };

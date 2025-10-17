@@ -12,27 +12,15 @@ extern "C" void UApplyGate(double* rho, int rho_size, int gate, int target) {
     FromMatrix(res, rho, rho_size);
 }
 
-extern "C" void UAmplitudeDampeningAndDephasing(double* rho, int rho_size, double* T1, double* T2, double t){
-    auto in_mat = ToMatrix(rho,rho_size);
-    cx_mat res = ApplyAmplitudeDampeningAndDephasing(in_mat, T1,T2, t);
-    ofstream myfile;
-    myfile.open("/home/lokew/Documents/code/DensityMatrixQuantumSimulator/log.txt");
-    myfile << "Input matrix: \n";
-    myfile << in_mat << "\n";
-    myfile << "T1:" << T1[0] << "," << T1[2] << "\n";
-    myfile << "T2:" << T2[0] << "," << T2[2] << "\n";
-    myfile << "t:" << t << "\n";
-    myfile << "Noisy matrix:\n";
-    myfile << res << "\n";
-    myfile.close();
+extern "C" void UApplyCGate(double* rho, int rho_size, int gate, int target, int control) {
+    cx_mat res = ApplyCGate(ToMatrix(rho,rho_size), static_cast<u_gate>(gate), target, control);
     FromMatrix(res, rho, rho_size);
 }
 
-extern "C" void UMeasureAllS(double* rho, int rho_size, double* random_values, int* res, int smaple_count) {
-    vector<double> rv = vector<double>(random_values, (random_values + sizeof(double)*smaple_count));    
-    for(int i = 0; i < smaple_count; i++) {
-        res[i] = Sample(ToMatrix(rho,rho_size),rv[i]);
-    }
+extern "C" void UAmplitudeDampeningAndDephasing(double* rho, int rho_size, double* T1, double* T2, double t){
+    auto in_mat = ToMatrix(rho,rho_size);
+    cx_mat res = ApplyAmplitudeDampeningAndDephasing(in_mat, T1,T2, t);
+    FromMatrix(res, rho, rho_size);
 }
 
 extern "C" int UMeasureAll(double* rho, int rho_size, double random_value) {

@@ -13,6 +13,7 @@ bool IsPure(cx_mat rho, double delta);
 cx_mat BinaryStringToDensityMatrix(const string bin);
 cx_mat ApplyGateToDensityMatrix(cx_mat matrix, cx_mat gate);
 cx_mat ApplyGate(cx_mat rho, u_gate gate, int qubit);
+cx_mat ApplyCGate(cx_mat rho, u_gate gate, int target, int control);
 cx_mat GateToNQubitSystem(cx_mat gate, int target, int n);
 cx_mat ApplyAmplitudeDampeningAndDephasing(cx_mat rho, double* T1, double* T2, double t);
 cx_mat PartialTrace(cx_mat rho, vector<int> targets);
