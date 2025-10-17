@@ -12,9 +12,12 @@ set(CMAKE_CXX_STANDARD_EXTENSIONS FALSE)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wpedantic -Wall -Wextra")
 
-find_package(Armadillo REQUIRED)
+include(cmake/sanitizers.cmake)
+include(cmake/armadillo.cmake)
+include_directories(include)
 
 # Add subdirectories
 add_subdirectory(src)
 add_subdirectory(bindings)
+enable_testing()
 add_subdirectory(tests)
