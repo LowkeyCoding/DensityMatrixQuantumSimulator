@@ -1,4 +1,4 @@
-#include "gates.hpp"
+#include "gates/gates.hpp"
 
 /// @brief Basis state |0⟩
 cx_mat B0(){

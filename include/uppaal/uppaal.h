@@ -1,4 +1,4 @@
-#include "../src/dmqs.hpp"
+#include <dmqs/dmqs.hpp>
 #include <cstdlib>
 #ifndef UPPAAL_H
 #define UPPAAL_H

@@ -4,7 +4,7 @@
 #include <complex>
 #include <armadillo>
 #include <cassert>
-#include "gates/gates.hpp"
+#include <gates/gates.hpp>
 
 using namespace std;
 using namespace arma;

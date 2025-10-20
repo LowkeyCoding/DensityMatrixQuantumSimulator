@@ -1,4 +1,4 @@
-#include "uppaal.h"
+#include <uppaal/uppaal.h>
 
 extern "C" void UInitBinState(double* rho, int rho_size, const char* state) {
     assert(size_t(rho_size) == strlen(state));

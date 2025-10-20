@@ -14,10 +14,12 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wpedantic -Wall -Wextra")
 
 include(cmake/sanitizers.cmake)
 include(cmake/armadillo.cmake)
-include_directories(include)
 
+
+include_directories(include)
 # Add subdirectories
 add_subdirectory(src)
 add_subdirectory(bindings)
-enable_testing()
+
+include(cmake/doctest.cmake)
 add_subdirectory(tests)
