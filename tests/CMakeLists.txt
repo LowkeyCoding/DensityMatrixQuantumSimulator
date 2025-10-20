@@ -2,9 +2,8 @@
 
 if(GATES_TESTS)
     add_executable(gates_test gates_test.cpp)
-    target_link_libraries(gates_test dmqs_core)
+    target_link_libraries(gates_test dmqs_core doctest::doctest_with_main)
 
-    # Add test running command
     add_custom_command(
         TARGET gates_test
         POST_BUILD
@@ -14,9 +13,8 @@ endif(GATES_TESTS)
 
 if(DMQS_TESTS)
     add_executable(dmqs_test dmqs_test.cpp)
-    target_link_libraries(dmqs_test dmqs_core)
+    target_link_libraries(dmqs_test dmqs_core doctest::doctest_with_main)
 
-    # Add test running command
     add_custom_command(
         TARGET dmqs_test
         POST_BUILD
@@ -26,9 +24,8 @@ endif(DMQS_TESTS)
 
 if(UPPAAL_TESTS)
     add_executable(uppaal_test uppaal_test.cpp)
-    target_link_libraries(uppaal_test dmqs_uppaal)
+    target_link_libraries(uppaal_test dmqs_uppaal doctest::doctest_with_main)
 
-    # Add test running command
     add_custom_command(
         TARGET uppaal_test
         POST_BUILD

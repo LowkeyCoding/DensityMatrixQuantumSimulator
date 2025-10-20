@@ -1,6 +1,5 @@
-#include "../bindings/uppaal.h"
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-#include "../libs/doctest.h"
+#include <uppaal/uppaal.h>
+#include "doctest/doctest.h"
 #define EXACT 0.0
 #define DEC14 1e-14
 

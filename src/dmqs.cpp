@@ -1,4 +1,4 @@
-#include "dmqs.hpp"
+#include "dmqs/dmqs.hpp"
 
 /// @brief Takes a binary string and converts it into a density matrix with the basis state 01
 /// @param bin A binary string e.g "0101"
