@@ -1,10 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 project(DensityMatrixQuantumSimulator)
 
-option(GATES_TESTS "GATESUnit Test" TRUE)
-option(DMQS_TESTS "DMQSUnit Test" TRUE)
-option(UPPAAL_TESTS "UPPAALUnit Test" TRUE)
-
 set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 set(CMAKE_CXX_STANDARD_EXTENSIONS FALSE)
 
@@ -22,4 +18,5 @@ add_subdirectory(src)
 add_subdirectory(bindings)
 
 include(cmake/doctest.cmake)
+enable_testing()
 add_subdirectory(tests)
