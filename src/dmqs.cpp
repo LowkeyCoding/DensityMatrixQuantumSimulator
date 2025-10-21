@@ -24,21 +24,49 @@ cx_mat BinaryStringToDensityMatrix(const string bin){
     return density_matrix;
 }
 
+/// @brief Converts a density matrix into a string showing probabilities of each bit string
+/// @param rho Density matrix to analyze
+/// @return String showing each possible bit string and its probability
+string DensityMatrixToProbabilityString(cx_mat rho) {
+    // Get the probabilities from the diagonal
+    vector<double> probabilities = GetPropabilities(rho);
+    
+    int n_qubits = ceil(log2(rho.n_rows));
+    int num_states = probabilities.size();
+    
+    string result = "Probabilities of each bit string:\n";
+    
+    for (int i = 0; i < num_states; ++i) {
+        // Convert state index to binary string
+        string bit_string = "";
+        for (int j = n_qubits - 1; j >= 0; --j) {
+            bit_string += ((i >> j) & 1) ? '1' : '0';
+        }
+        
+        // Format the probability with reasonable precision
+        char prob_str[20];
+        snprintf(prob_str, sizeof(prob_str), "%.6f", probabilities[i]);
+        
+        result += "|" + bit_string + ">: " + prob_str + "\n";
+    }
+    
+    return result;
+}
+
 /// @brief Creates a gate that applies a single-qubit operation to a specific target qubit in an n-qubit system.
 /// @param U1 The single-qubit gate to be applied.
 /// @param target The index (zero-based) of the target qubit within the system.
 /// @param n The total number of qubits in the system.
 /// @return An n-qubit gate that only affects the specified target qubit.
 cx_mat GateToNQubitSystem(cx_mat U1, int target, int n){
-    cx_mat UN = target == 0 ? U1 : Id();
-    for(int i = 1; i < n; i++){
-        if (i == target){
-            UN = kron(UN, U1);
-        } else {
-            UN = kron(UN, Id());
-        }
+    if (target > 0){
+        U1 = kron(Id(target), U1);
     }
-    return UN;
+    int diff = int(abs(target - n)) - 1;
+    if (diff > 0) {
+        U1 = kron(U1,Id(diff));
+    }
+    return U1;
 }
 
 /// @brief Applies a Gate U to the density matrix rho
@@ -137,27 +165,47 @@ int rearrangeBits(int i, vector<int> a) {
 /// @return A denisty matrix of the traced qubits.
 cx_mat PartialTrace(cx_mat rho, vector<int> targets) {
     assert(rho.n_rows == rho.n_cols);
-    assert(rho.n_rows >= targets.size());
     int n = ceil(log2(rho.n_rows));
-    int traced = 1 << (n-targets.size());
-    int keept = 1 << targets.size();
-    vector<int> tt;
-    for(int i = 0; i < n; i++){
-        tt.push_back(i);
+    int traced_size = 1 << (n - targets.size()); // size of kept system
+    int kept_size = 1 << targets.size(); // size of traced-out system
+    
+    // Convert qubit indices to bit positions (qubit 0 is MSB)
+    vector<int> bit_positions;
+    for (int i = 0; i < n; i++) {
+        bit_positions.push_back(n - 1 - i);
     }
-    int offset = 0;
-    for (size_t i = 0; i < targets.size(); i++) {
-        tt.erase(tt.begin() + targets[i] + offset);
-        offset -= 1;
+    
+    vector<int> kept_qubits;
+    for (int i = 0; i < n; i++) {
+        kept_qubits.push_back(i);
     }
-    cx_mat result = cx_mat(keept,keept, fill::zeros);
-    for (int bit = 0; bit < traced; bit++) {
-        int shbr = rearrangeBits(bit, tt);
-        for(int r = 0; r < traced; r++) {
-            int ir = shbr | rearrangeBits(r, targets);
-            for(int c = 0; c < traced; c++){
-                int ic = shbr | rearrangeBits(c, targets);
-                result(r,c) += rho(ir,ic);
+    // Remove target qubits from kept_qubits
+    sort(targets.begin(), targets.end(), greater<int>());
+    for (int t : targets) {
+        kept_qubits.erase(kept_qubits.begin() + t);
+    }
+    
+    // Convert kept_qubits and targets to bit positions
+    vector<int> kept_bits;
+    for (int k : kept_qubits) {
+        kept_bits.push_back(bit_positions[k]);
+    }
+    vector<int> target_bits;
+    for (int t : targets) {
+        target_bits.push_back(bit_positions[t]);
+    }
+    
+    cx_mat result = cx_mat(kept_size, kept_size, fill::zeros);
+    
+    for (int r = 0; r < kept_size; r++) {
+        int r_bits = rearrangeBits(r, target_bits);
+        for (int c = 0; c < kept_size; c++) {
+            int c_bits = rearrangeBits(c, target_bits);
+            for (int bit = 0; bit < traced_size; bit++) {
+                int bit_bits = rearrangeBits(bit, kept_bits);
+                int ir = bit_bits | r_bits;
+                int ic = bit_bits | c_bits;
+                result(r, c) += rho(ir, ic);
             }
         }
     }
@@ -179,6 +227,34 @@ vector<double> GetPropabilities(cx_mat rho) {
     
     return weights;
 }
+cx_mat CreateProjector(int n_qubits, int target, int outcome) {
+    int dim = pow(2, n_qubits);
+    cx_mat projector = cx_mat(dim, dim, fill::zeros);
+    
+    for (int i = 0; i < dim; i++) {
+        // Check if the target qubit in basis state i has the desired outcome
+        if (((i >> (n_qubits - 1 - target)) & 1) == outcome) {
+            projector(i, i) = 1.0;
+        }
+    }
+    
+    return projector;
+}
+
+
+cx_mat MeasurementGate(const cx_mat rho, int target, double random_value) {
+    
+    // Calculate measurement probabilities directly
+    int sample = Sample(rho, random_value);
+    u_gate U = sample ? GB1 : GB0;
+    cx_mat rho_projected = ApplyGate(rho, U, target);
+    
+    // Normalize by trace
+    cx_double trace_val = trace(rho_projected);
+    rho_projected = rho_projected / trace_val;
+    
+    return rho_projected;
+}
 
 /// @brief Gets a sample from the density matrix for each random value provided.
 /// @param rho Density matrix to sample from.
@@ -190,7 +266,7 @@ int Sample(const cx_mat rho, double random_value) {
     }
     
     if (random_value < 0.0 || random_value >= 1.0) {
-        throw invalid_argument("Random value must be in [0, 1]");
+        throw invalid_argument("Random value must be in [0, 1]. " + to_string(random_value) +  "was supplied");
     }
     
     // Diagonalize the density matrix to get eigenvalues (probabilities)

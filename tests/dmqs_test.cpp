@@ -44,11 +44,11 @@ TEST_CASE("Test generating state from binary string") {
         cx_mat t4 = ApplyCGate(c10, GCX, 0,1);
         cx_mat t5 = ApplyCGate(c11, GCX, 0,1);
 
-        CHECK(mat_eq(t1, c10,EXACT));
-        CHECK(mat_eq(t2, c01,EXACT));
-        CHECK(mat_eq(t3, c00,EXACT));
-        CHECK(mat_eq(t4, c11,EXACT));
-        CHECK(mat_eq(t5, c10,EXACT));
+        CHECK(mat_eq(t1, c10, EXACT));
+        CHECK(mat_eq(t2, c01, EXACT));
+        CHECK(mat_eq(t3, c00, EXACT));
+        CHECK(mat_eq(t4, c11, EXACT));
+        CHECK(mat_eq(t5, c10, EXACT));
     }
     
 
@@ -120,8 +120,6 @@ TEST_CASE("Controlled Gates Test") {
     }
 }
 TEST_CASE("Rearrange bits"){
-    vector<int> t12 ={1,2};
-    vector<int> t03 ={0,3};
     cx_double d0 = cx_double(0,0);
     cx_double d1 = cx_double(1,0);
     cx_mat::fixed<4,4> c00 = {
@@ -137,10 +135,19 @@ TEST_CASE("Rearrange bits"){
         d0,d0,d0,d0,
         d0,d0,d0,d1
     };
-
     cx_mat rho = BinaryStringToDensityMatrix("1001");
-    CHECK(approx_equal(PartialTrace(rho,t12),c00,"absdiff", EXACT));
-    CHECK(approx_equal(PartialTrace(rho,t03),c11,"absdiff", EXACT));
+    CHECK(mat_eq(PartialTrace(rho,{1,2}),c00, EXACT));
+    CHECK(mat_eq(PartialTrace(rho,{0,3}),c11, EXACT));
+    CHECK(mat_eq(PartialTrace(rho,{0}),B1(), EXACT));
+    CHECK(mat_eq(PartialTrace(rho,{1}),B0(), EXACT));
+    CHECK(mat_eq(PartialTrace(rho,{2}),B0(), EXACT));
+    CHECK(mat_eq(PartialTrace(rho,{3}),B1(), EXACT));
+    cx_mat rho1 = BinaryStringToDensityMatrix("00");
+    CHECK(mat_eq(PartialTrace(rho1, {0}), B0(), DEC14));
+    CHECK(mat_eq(PartialTrace(rho1, {1}), B0(), DEC14));
+    rho1 = ApplyGate(rho1, GX,0);
+    CHECK(mat_eq(PartialTrace(rho1, {0}), B1(), DEC14));
+    CHECK(mat_eq(PartialTrace(rho1, {1}), B0(), DEC14));
 }
 
 TEST_CASE("Sample Bell State"){
@@ -165,3 +172,22 @@ TEST_CASE("Sample Bell State"){
     }
 }
 
+TEST_CASE("Quantum Teleportation") {
+    cx_mat rho0 = BinaryStringToDensityMatrix("100");
+    rho0 = ApplyGate(rho0, GH, 0);
+    cx_mat qpsi = PartialTrace(rho0,{0});
+    INFO("Input qubit:\n", PartialTrace(rho0,{0}));
+    cx_mat rho1 = ApplyGate(rho0, GH, 1);
+    cx_mat rho2 = ApplyCGate(rho1, GCX,1,2);
+    cx_mat rho3 = ApplyCGate(rho2, GCX,0,1);
+    cx_mat rho4 = ApplyGate(rho3, GH,0);
+    cx_mat rho5 = MeasurementGate(rho4, 0, 0.8); // 1
+    cx_mat rho6 = MeasurementGate(rho5, 1, 0.8); // 1
+    cx_mat rho7 = ApplyGate(rho6, GZ, 2);
+    rho7 = ApplyGate(rho6, GZ, 2);
+    cx_mat qtele = PartialTrace(rho7,{2});
+    INFO("quantum_teleportation 7: \n", rho7);
+    INFO("Final qubit:\n", qtele);
+    INFO(DensityMatrixToProbabilityString(rho7));
+    CHECK(mat_eq(qpsi,qtele, DEC14));
+}
