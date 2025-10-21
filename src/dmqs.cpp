@@ -227,23 +227,9 @@ vector<double> GetPropabilities(cx_mat rho) {
     
     return weights;
 }
-cx_mat CreateProjector(int n_qubits, int target, int outcome) {
-    int dim = pow(2, n_qubits);
-    cx_mat projector = cx_mat(dim, dim, fill::zeros);
-    
-    for (int i = 0; i < dim; i++) {
-        // Check if the target qubit in basis state i has the desired outcome
-        if (((i >> (n_qubits - 1 - target)) & 1) == outcome) {
-            projector(i, i) = 1.0;
-        }
-    }
-    
-    return projector;
-}
 
 
 cx_mat MeasurementGate(const cx_mat rho, int target, double random_value) {
-    
     // Calculate measurement probabilities directly
     int sample = Sample(rho, random_value);
     u_gate U = sample ? GB1 : GB0;
