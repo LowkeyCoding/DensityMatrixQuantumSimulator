@@ -24,35 +24,6 @@ cx_mat BinaryStringToDensityMatrix(const string bin){
     return density_matrix;
 }
 
-/// @brief Converts a density matrix into a string showing probabilities of each bit string
-/// @param rho Density matrix to analyze
-/// @return String showing each possible bit string and its probability
-string DensityMatrixToProbabilityString(cx_mat rho) {
-    // Get the probabilities from the diagonal
-    vector<double> probabilities = GetPropabilities(rho);
-    
-    int n_qubits = ceil(log2(rho.n_rows));
-    int num_states = probabilities.size();
-    
-    string result = "Probabilities of each bit string:\n";
-    
-    for (int i = 0; i < num_states; ++i) {
-        // Convert state index to binary string
-        string bit_string = "";
-        for (int j = n_qubits - 1; j >= 0; --j) {
-            bit_string += ((i >> j) & 1) ? '1' : '0';
-        }
-        
-        // Format the probability with reasonable precision
-        char prob_str[20];
-        snprintf(prob_str, sizeof(prob_str), "%.6f", probabilities[i]);
-        
-        result += "|" + bit_string + ">: " + prob_str + "\n";
-    }
-    
-    return result;
-}
-
 /// @brief Creates a gate that applies a single-qubit operation to a specific target qubit in an n-qubit system.
 /// @param U1 The single-qubit gate to be applied.
 /// @param target The index (zero-based) of the target qubit within the system.
@@ -74,9 +45,6 @@ cx_mat GateToNQubitSystem(cx_mat U1, int target, int n){
 /// @param U 
 /// @return The modified density matrix
 cx_mat ApplyGateToDensityMatrix(cx_mat rho, cx_mat U){
-    assert(rho.n_rows == U.n_rows);
-    assert(rho.n_cols == U.n_cols);
-    assert(rho.n_cols == U.n_rows);
     return (U * rho) * (conj(U).t());
 }
 
@@ -104,12 +72,6 @@ cx_mat ApplyGate(cx_mat rho, u_gate gate, int qubit) {
             break;
         case GH:
             U = H();
-            break;
-        case GB0:
-            U = B0();
-            break;
-        case GB1:
-            U = B1();
             break;
         default:
             throw invalid_argument("ApplyGate " + to_string((int)gate) + " is an invalid gate");
@@ -164,7 +126,13 @@ int rearrangeBits(int i, vector<int> a) {
 /// @param targets A vector containing the qubits to trace.
 /// @return A denisty matrix of the traced qubits.
 cx_mat PartialTrace(cx_mat rho, vector<int> targets) {
-    assert(rho.n_rows == rho.n_cols);
+    if (rho.n_rows != rho.n_cols) {
+        throw invalid_argument("Matrix provided should be square not " + to_string(rho.n_rows) + " by " + to_string(rho.n_cols));
+    }
+    auto minmax = minmax_element(targets.begin(), targets.end());
+    if (*minmax.first < 0 || (size_t)*minmax.second > rho.n_rows) {
+        throw invalid_argument("Targets should be greater than 0 and less than " + to_string(rho.n_rows) + ". Min max " + to_string(*minmax.first) + "," + to_string(*minmax.second));
+    }
     int n = ceil(log2(rho.n_rows));
     int traced_size = 1 << (n - targets.size()); // size of kept system
     int kept_size = 1 << targets.size(); // size of traced-out system
@@ -212,28 +180,12 @@ cx_mat PartialTrace(cx_mat rho, vector<int> targets) {
     return result;
 }
 
-/// @brief Gets the weights from the diagonal of the density matrix
-/// @param rho Density matrix to get weights from
-/// @return The weights of density matrix.
-vector<double> GetPropabilities(cx_mat rho) {
-    // Get the diagonal elements (these are the probabilities)
-    cx_vec diagonal = rho.diag();
-    
-    // Convert to real probabilities (diagonal of density matrix should be real and non-negative)
-    vector<double> weights(diagonal.n_elem);
-    for (size_t i = 0; i < diagonal.n_elem; ++i) {
-        weights[i] = diagonal(i).real();  // Take real part (imaginary should be zero)
-    }
-    
-    return weights;
-}
-
 
 cx_mat MeasurementGate(const cx_mat rho, int target, double random_value) {
     // Calculate measurement probabilities directly
     int sample = Sample(rho, random_value);
-    u_gate U = sample ? GB1 : GB0;
-    cx_mat rho_projected = ApplyGate(rho, U, target);
+    auto U = sample ? B1() : B0();
+    cx_mat rho_projected = ApplyGateToDensityMatrix(rho, GateToNQubitSystem(U,target,ceil(log2(rho.n_rows))));
     
     // Normalize by trace
     cx_double trace_val = trace(rho_projected);

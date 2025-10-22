@@ -20,13 +20,13 @@ TEST_CASE("State intializer"){
     c11[30] = 1;
     
     UInitBinState(r00, qubits, "00");
-    CHECK(std::equal(std::begin(r00), std::end(r00), std::begin(c00)));
+    CHECK(equal(begin(r00), end(r00), begin(c00)));
     UInitBinState(r01, qubits, "01");
-    CHECK(std::equal(std::begin(r01), std::end(r01), std::begin(c01)));
+    CHECK(equal(begin(r01), end(r01), begin(c01)));
     UInitBinState(r10, qubits, "10");
-    CHECK(std::equal(std::begin(r10), std::end(r10), std::begin(c10)));
+    CHECK(equal(begin(r10), end(r10), begin(c10)));
     UInitBinState(r11, qubits, "11");
-    CHECK(std::equal(std::begin(r11), std::end(r11), std::begin(c11)));
+    CHECK(equal(begin(r11), end(r11), begin(c11)));
     
     SUBCASE("sample states"){
         double random[20] = {0.0045, 0.7908, 0.9903, 0.1085, 0.8035, 0.6303, 0.2853, 0.1125, 0.3623, 0.5738, 0.9714, 0.1138, 0.9487, 0.3961, 0.0949, 0.0730, 0.3724, 0.5300, 0.9606, 0.8233};

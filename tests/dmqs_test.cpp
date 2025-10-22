@@ -188,6 +188,5 @@ TEST_CASE("Quantum Teleportation") {
     cx_mat qtele = PartialTrace(rho7,{2});
     INFO("quantum_teleportation 7: \n", rho7);
     INFO("Final qubit:\n", qtele);
-    INFO(DensityMatrixToProbabilityString(rho7));
     CHECK(mat_eq(qpsi,qtele, DEC14));
 }

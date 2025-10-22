@@ -10,8 +10,6 @@ using namespace std;
 using namespace arma;
 
 bool IsPure(cx_mat rho, double delta);
-vector<double> GetPropabilities(cx_mat rho);
-string DensityMatrixToProbabilityString(cx_mat rho);
 cx_mat BinaryStringToDensityMatrix(const string bin);
 cx_mat ApplyGateToDensityMatrix(cx_mat matrix, cx_mat gate);
 cx_mat ApplyGate(cx_mat rho, u_gate gate, int qubit);
