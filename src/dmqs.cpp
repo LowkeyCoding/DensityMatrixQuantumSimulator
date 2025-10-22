@@ -136,7 +136,6 @@ cx_mat PartialTrace(cx_mat rho, vector<int> targets) {
     int n = ceil(log2(rho.n_rows));
     int traced_size = 1 << (n - targets.size()); // size of kept system
     int kept_size = 1 << targets.size(); // size of traced-out system
-    
     // Convert qubit indices to bit positions (qubit 0 is MSB)
     vector<int> bit_positions;
     for (int i = 0; i < n; i++) {
