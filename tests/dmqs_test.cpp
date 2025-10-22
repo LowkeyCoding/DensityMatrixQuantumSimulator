@@ -36,7 +36,7 @@ TEST_CASE("Test generating state from binary string") {
         d0,d0,d0,d0,
         d0,d0,d0,d1
     };
-    SUBCASE("Apply gate using string") {
+    SUBCASE("Apply gate using u_gate") {
         // TODO: Add more tests
         cx_mat t1 = ApplyGate(c00, GX, 0);
         cx_mat t2 = ApplyGate(c00, GX, 1);

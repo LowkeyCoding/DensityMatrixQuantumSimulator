@@ -6,11 +6,12 @@ set(CMAKE_CXX_STANDARD_EXTENSIONS FALSE)
 
 # Global compile options
 set(CMAKE_CXX_STANDARD 23)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wpedantic -Wall -Wextra -O3")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wpedantic -Wall -Wextra -O3")  # use -L/opt/cuda/lib64 -lnvblas for gpu support 
 
 include(cmake/sanitizers.cmake)
 include(cmake/armadillo.cmake)
-
+find_package(OpenBLAS REQUIRED)
+find_package(LAPACK REQUIRED)
 
 include_directories(include)
 # Add subdirectories

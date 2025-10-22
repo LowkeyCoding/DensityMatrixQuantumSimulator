@@ -10,4 +10,6 @@ target_include_directories(dmqs_core PUBLIC
 
 target_link_libraries(dmqs_core PUBLIC 
     armadillo 
-    spdlog)
+    spdlog
+    openblas
+    lapack)
