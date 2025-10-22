@@ -20,7 +20,7 @@ extern "C" void UApplyCGate(double* rho, int rho_size, int gate, int target, int
     memcpy(rho,res.memptr(), (pow(2,rho_size*rho_size)*2)*sizeof(double));
 }
 
-extern "C" void UApplyMGate(double* rho, int rho_size, int target, double random) {
+extern "C" void UApplyMGate(double* rho, int rho_size, int target, double random_value) {
     int mat_row = rho_size*2;
     cx_mat in_mat = cx_mat((cx_double*)rho, mat_row,mat_row, false, true);
     cx_mat res = MeasurementGate(in_mat, target, random_value);
