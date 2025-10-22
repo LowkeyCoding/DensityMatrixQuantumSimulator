@@ -10,6 +10,7 @@ extern "C" void UInitBinState(double* rho, int rho_size, const char* state);
 extern "C" int UMeasureAll(double* rho, int rho_size, double random_value);
 extern "C" void UApplyGate(double* rho, int rho_size, int gate, int target);
 extern "C" void UApplyCGate(double* rho, int rho_size, int gate, int target, int control);
+extern "C" void UApplyMGate(double* rho, int rho_size, int target, double random);
 extern "C" void UAmplitudeDampeningAndDephasing(double* rho, int rho_size, double* T1, double* T2, double t);
 
 // New Format
