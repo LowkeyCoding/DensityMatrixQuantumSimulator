@@ -176,8 +176,6 @@ TEST_CASE("Quantum Teleportation") {
     cx_mat rho0 = BinaryStringToDensityMatrix("100");
     rho0 = ApplyGate(rho0, GH, 0);
     cx_mat qpsi = PartialTrace(rho0,{0});
-    cout << rho0 << endl;
-    cout << "In rows" << rho0.n_rows << endl;
     INFO("Input qubit:\n", PartialTrace(rho0,{0}));
     cx_mat rho1 = ApplyGate(rho0, GH, 1);
     cx_mat rho2 = ApplyCGate(rho1, GCX,1,2);

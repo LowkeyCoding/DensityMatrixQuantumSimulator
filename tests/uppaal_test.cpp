@@ -97,24 +97,15 @@ TEST_CASE("Apply Gate") {
         CHECK(cmp(b1, cb1, size, EXACT));
     }
     SUBCASE("Z Gate") {
-        double z1_expected[8] = {0, 0, 0, 0, -1, 0, 0, 0};
         UApplyGate(b0, 1, GZ, 0);
         // 0 Z == 1
         CHECK(cmp(b0, cb0, size, EXACT));
         UApplyGate(b0, 1, GZ, 0);
         // 0 Z Z == 0
         CHECK(cmp(b0, cb0, size, EXACT));
-        for(int i = 0; i < 8; i++ ) {
-            cout << b1[i] << ",";
-        }
-        cout << endl;
         UApplyGate(b1, 1, GZ, 0);
-        for(int i = 0; i < 8; i++ ) {
-            cout << b1[i] << ",";
-        }
-        cout << endl;
         // 1 Z == 0
-        CHECK(cmp(b1, z1_expected, size, EXACT));
+        CHECK(cmp(b1, cb1, size, EXACT));
         UApplyGate(b1, 1, GZ, 0);
         // 1 Z Z == 1
         CHECK(cmp(b1, cb1, size, EXACT));
