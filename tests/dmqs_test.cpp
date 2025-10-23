@@ -183,10 +183,11 @@ TEST_CASE("Quantum Teleportation") {
     cx_mat rho4 = ApplyGate(rho3, GH,0);
     cx_mat rho5 = MeasurementGate(rho4, 0, 0.8); // 1
     cx_mat rho6 = MeasurementGate(rho5, 1, 0.8); // 1
-    cx_mat rho7 = ApplyGate(rho6, GZ, 2);
-    rho7 = ApplyGate(rho6, GZ, 2);
+    cx_mat rho7 = ApplyGate(rho6, GX, 2);
+    rho7 = ApplyGate(rho7, GZ, 2);
     cx_mat qtele = PartialTrace(rho7,{2});
     INFO("quantum_teleportation 7: \n", rho7);
     INFO("Final qubit:\n", qtele);
     CHECK(mat_eq(qpsi,qtele, DEC14));
+    CHECK(false);
 }

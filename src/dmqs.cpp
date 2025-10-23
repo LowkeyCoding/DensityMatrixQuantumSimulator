@@ -182,7 +182,7 @@ cx_mat PartialTrace(cx_mat rho, vector<int> targets) {
 
 cx_mat MeasurementGate(const cx_mat rho, int target, double random_value) {
     // Calculate measurement probabilities directly
-    int sample = Sample(rho, random_value);
+    int sample = Sample(PartialTrace(rho, {target}), random_value);
     auto U = sample ? B1() : B0();
     cx_mat rho_projected = ApplyGateToDensityMatrix(rho, GateToNQubitSystem(U,target,ceil(log2(rho.n_rows))));
     
