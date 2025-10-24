@@ -144,6 +144,35 @@ TEST_CASE("Partial Trace 3 qubit") {
     CHECK(cmp(rt, cm2, 8, EXACT));
 }
 
+TEST_CASE("Quantum Teleportation") {
+    int qc = 3;
+    double rho[128] = {0};
+    UInitBinState(rho, qc, "100");
+    UApplyGate(rho, qc, GH, 0);
+    double qpsi[8] = {0}; 
+    int target[1] = {0};
+    UPartialTrace(rho, qc, qpsi, 1, target, 1);
+    INFO("Input qubit:\n", qpsi);
+    UApplyGate(rho, qc, GH, 1);
+    UApplyCGate(rho, qc, GCX,1,2);
+    UApplyCGate(rho, qc, GCX,0,1);
+    UApplyGate(rho, qc, GH,0);
+    int measure[2] = {0,1};
+    int sample = UPartialMeasure(rho, qc, measure, 2, 0.8); // 11
+    INFO("Sampled state: ", sample);
+    UBasisProjection(rho, qc, 0, 1);
+    UBasisProjection(rho, qc, 1, 1);
+    UApplyGate(rho, qc, GX, 2);
+    UApplyGate(rho, qc, GZ, 2);
+    double qtele[8] = {0}; 
+    target[0] = 2;
+    UPartialTrace(rho, qc, qtele, 1, target, 1);
+    INFO("State after teleportation: \n", rho);
+    INFO("Final qubit:\n", qtele);
+    CHECK(cmp(qpsi,qtele,8, DEC14));
+}
+
+
 TEST_CASE("Apply Noise") {
 
 }

@@ -173,21 +173,22 @@ TEST_CASE("Sample Bell State"){
 }
 
 TEST_CASE("Quantum Teleportation") {
-    cx_mat rho0 = BinaryStringToDensityMatrix("100");
-    rho0 = ApplyGate(rho0, GH, 0);
-    cx_mat qpsi = PartialTrace(rho0,{0});
-    INFO("Input qubit:\n", PartialTrace(rho0,{0}));
-    cx_mat rho1 = ApplyGate(rho0, GH, 1);
-    cx_mat rho2 = ApplyCGate(rho1, GCX,1,2);
-    cx_mat rho3 = ApplyCGate(rho2, GCX,0,1);
-    cx_mat rho4 = ApplyGate(rho3, GH,0);
-    cx_mat rho5 = MeasurementGate(rho4, 0, 0.8); // 1
-    cx_mat rho6 = MeasurementGate(rho5, 1, 0.8); // 1
-    cx_mat rho7 = ApplyGate(rho6, GX, 2);
-    rho7 = ApplyGate(rho7, GZ, 2);
-    cx_mat qtele = PartialTrace(rho7,{2});
-    INFO("quantum_teleportation 7: \n", rho7);
+    cx_mat rho = BinaryStringToDensityMatrix("100");
+    rho = ApplyGate(rho, GH, 0);
+    cx_mat qpsi = PartialTrace(rho,{0});
+    INFO("Input qubit:\n", qpsi);
+    rho = ApplyGate(rho, GH, 1);
+    rho = ApplyCGate(rho, GCX,1,2);
+    rho = ApplyCGate(rho, GCX,0,1);
+    rho = ApplyGate(rho, GH,0);
+    int sample = PartialSample(rho, {0,1}, 0.8); // 11
+    INFO("Sampled state: ", sample);
+    rho = BasisProjections(rho, {0,1}, sample);
+    cout << "Rho after projection: \n" <<  rho << endl;
+    rho = ApplyGate(rho, GX, 2);
+    rho = ApplyGate(rho, GZ, 2);
+    cx_mat qtele = PartialTrace(rho,{2});
+    INFO("State after teleportation: \n", rho);
     INFO("Final qubit:\n", qtele);
     CHECK(mat_eq(qpsi,qtele, DEC14));
-    CHECK(false);
 }

@@ -179,11 +179,13 @@ cx_mat PartialTrace(cx_mat rho, vector<int> targets) {
     return result;
 }
 
-
-cx_mat MeasurementGate(const cx_mat rho, int target, double random_value) {
-    // Calculate measurement probabilities directly
-    int sample = Sample(PartialTrace(rho, {target}), random_value);
-    auto U = sample ? B1() : B0();
+/// @brief Projects a basis state on a density matrix
+/// @param rho 
+/// @param target
+/// @param state
+/// @return
+cx_mat BasisProjection(const cx_mat rho, int target, int state) {
+    auto U = state ? B1() : B0();
     cx_mat rho_projected = ApplyGateToDensityMatrix(rho, GateToNQubitSystem(U,target,ceil(log2(rho.n_rows))));
     
     // Normalize by trace
@@ -193,17 +195,64 @@ cx_mat MeasurementGate(const cx_mat rho, int target, double random_value) {
     return rho_projected;
 }
 
+cx_mat BasisProjections(const cx_mat rho, vector<int> targets, int state) {
+    int j = 0;
+    cx_mat UT = Id();
+    if (targets[j] == 0) {
+        UT = 1 & state ? B1() : B0();
+        state = state >> 1; 
+        j++;
+    }
+    int qc = ceil(log2(rho.n_rows));
+    for(int i = 1; i < qc; i++) {
+        if(i == targets[j]) {
+            cx_mat B = 1 & state ? B1() : B0();  
+            UT = kron(UT, B);
+            state = state >> 1; 
+            j++; 
+        } else {
+            UT = kron(UT, Id());
+        }
+    }
+    cx_mat rho_projected = ApplyGateToDensityMatrix(rho, UT);
+    
+    // Normalize by trace
+    cx_double trace_val = trace(rho_projected);
+    rho_projected = rho_projected / trace_val;
+    
+    return rho_projected;
+}
+
+
+/// @brief Samples a set of target qubits from a larger density matrix
+/// @param rho Density matrix to sample from.
+/// @param targets Qubits to sample
+/// @param random Random value for sampling
+/// @return A int representing the collapsed state of the trageted qubits
+int PartialSample(const cx_mat rho, vector<int> targets, double random) {
+    return Sample(PartialTrace(rho, targets), random);
+}
+
+/// @brief Samples a qubit from a larger density matrix
+/// @param rho Density matrix to sample from.
+/// @param target Qubit to sample
+/// @param random Random value for sampling
+/// @return A int representing the collapsed state of the trageted qubits
+int PartialSample(const cx_mat rho, int target, double random) {
+    return Sample(PartialTrace(rho, {target}), random);
+}
+
 /// @brief Gets a sample from the density matrix for each random value provided.
 /// @param rho Density matrix to sample from.
 /// @return A vector of samples from the density matrix.
-int Sample(const cx_mat rho, double random_value) {
+int Sample(const cx_mat rho, double random) {
     // Validate input
     if (rho.n_rows != rho.n_cols) {
         throw invalid_argument("Density matrix must be square");
     }
     
-    if (random_value < 0.0 || random_value >= 1.0) {
-        throw invalid_argument("Random value must be in [0, 1]. " + to_string(random_value) +  "was supplied");
+    if (random < 0.0 || random >= 1.0) {
+        throw invalid_argument("Random value must be in [0, 1]. " + to_string(random) +  "was supplied");
     }
     
     // Diagonalize the density matrix to get eigenvalues (probabilities)
@@ -219,12 +268,12 @@ int Sample(const cx_mat rho, double random_value) {
 
     // Sample based on the random value
     for (uword i = 0; i < cumulative.n_elem; ++i) {
-        if (random_value < cumulative(i)) {
+        if (random < cumulative(i)) {
             return static_cast<int>(i);
         }
     }
     
-    // Fallback: return last index (shouldn't happen if random_value < 1.0)
+    // Fallback: return last index (shouldn't happen if random < 1.0)
     return static_cast<int>(cumulative.n_elem - 1);
 }
 
