@@ -47,3 +47,132 @@ TEST_CASE("State intializer"){
         }
     }
 }
+
+bool cmp(double* a, double* b, int size,  double delta) {
+    for(int i = 0; i < size; i++) {
+        if (abs(a[i]) - abs(b[i]) > delta) {
+            return false;
+        }
+    }
+    return true;
+}
+
+TEST_CASE("Apply Gate") {
+    double cb0[8] = {0};
+    UInitBinState(cb0, 1, "0");
+    double cb1[8] = {0};
+    UInitBinState(cb1, 1, "1");
+    double b0[8] = {0};
+    UInitBinState(b0, 1, "0");
+    double b1[8] = {0};
+    UInitBinState(b1, 1, "1");
+    int size = 8;
+    SUBCASE("X Gate") {
+        UApplyGate(b0, 1, GX, 0);
+        // 0 X == 1
+        CHECK(cmp(b0, cb1, size, EXACT));
+        UApplyGate(b0, 1, GX, 0);
+        // 0 X X == 0
+        CHECK(cmp(b0, cb0, size, EXACT));
+        UApplyGate(b1, 1, GX, 0);
+        // 1 X == 0
+        CHECK(cmp(b1, cb0, size, EXACT));
+        UApplyGate(b1, 1, GX, 0);
+        // 1 X X == 1
+        CHECK(cmp(b1, cb1, size, EXACT));
+    }
+    SUBCASE("Y Gate") {
+        double y1_expected[8] = {-1, 0, 0, 0, 0, 0, 0, 0};
+        UApplyGate(b0, 1, GY, 0);
+        // 0 Y == 1
+        CHECK(cmp(b0, cb1, size, EXACT));
+        UApplyGate(b0, 1, GY, 0);
+        // 0 Y Y == 0
+        CHECK(cmp(b0, cb0, size, EXACT));
+        UApplyGate(b1, 1, GY, 0);
+        // 1 Y == 0
+        CHECK(cmp(b1, y1_expected, size, EXACT));
+        UApplyGate(b1, 1, GY, 0);
+        // 1 Y Y == 1
+        CHECK(cmp(b1, cb1, size, EXACT));
+    }
+    SUBCASE("Z Gate") {
+        UApplyGate(b0, 1, GZ, 0);
+        // 0 Z == 1
+        CHECK(cmp(b0, cb0, size, EXACT));
+        UApplyGate(b0, 1, GZ, 0);
+        // 0 Z Z == 0
+        CHECK(cmp(b0, cb0, size, EXACT));
+        UApplyGate(b1, 1, GZ, 0);
+        // 1 Z == 0
+        CHECK(cmp(b1, cb1, size, EXACT));
+        UApplyGate(b1, 1, GZ, 0);
+        // 1 Z Z == 1
+        CHECK(cmp(b1, cb1, size, EXACT));
+    }
+}
+
+TEST_CASE("Partial Trace 2 qubit") {
+    double cb0[8] = {0};
+    UInitBinState(cb0, 1, "0");
+    double cb1[8] = {0};
+    UInitBinState(cb1, 1, "1");
+    double r01[32] = {0}; 
+    double rt[8] = {0};
+    int targets[1] = {1};
+    UInitBinState(r01, 2, "01");
+    UPartialTrace(r01, 2, rt, 1, targets, 1);
+    CHECK(cmp(rt, cb1, 8, EXACT));
+    targets[0] = 0;
+    UPartialTrace(r01, 2, rt, 1, targets, 1);
+    CHECK(cmp(rt, cb0, 8, EXACT));
+}
+TEST_CASE("Partial Trace 3 qubit") {
+    double cm1[32] = {0};
+    UInitBinState(cm1, 2, "01");
+    double cm2[32] = {0};
+    UInitBinState(cm2, 2, "10");
+    double r010[128] = {0}; 
+    UInitBinState(r010, 3, "010");
+    double rt[32] = {0};
+    int targets[2] = {0,1};
+    UPartialTrace(r010, 3, rt, 2, targets, 2);
+    CHECK(cmp(rt, cm1, 8, EXACT));
+    targets[0] = 1;
+    targets[1] = 2;
+    UPartialTrace(r010, 3, rt, 2, targets, 2);
+    CHECK(cmp(rt, cm2, 8, EXACT));
+}
+
+TEST_CASE("Quantum Teleportation") {
+    int qc = 3;
+    double rho[128] = {0};
+    UInitBinState(rho, qc, "100");
+    UApplyGate(rho, qc, GH, 0);
+    double qpsi[8] = {0}; 
+    int target[1] = {0};
+    UPartialTrace(rho, qc, qpsi, 1, target, 1);
+    INFO("Input qubit:\n", qpsi);
+    UApplyGate(rho, qc, GH, 1);
+    UApplyCGate(rho, qc, GCX,1,2);
+    UApplyCGate(rho, qc, GCX,0,1);
+    UApplyGate(rho, qc, GH,0);
+    int measure[2] = {0,1};
+    int sample = UPartialMeasure(rho, qc, measure, 2, 0.8); // 11
+    INFO("Sampled state: ", sample);
+    UBasisProjection(rho, qc, 0, 1);
+    UBasisProjection(rho, qc, 1, 1);
+    UApplyGate(rho, qc, GX, 2);
+    UApplyGate(rho, qc, GZ, 2);
+    double qtele[8] = {0}; 
+    target[0] = 2;
+    UPartialTrace(rho, qc, qtele, 1, target, 1);
+    INFO("State after teleportation: \n", rho);
+    INFO("Final qubit:\n", qtele);
+    CHECK(cmp(qpsi,qtele,8, DEC14));
+}
+
+
+TEST_CASE("Apply Noise") {
+
+}

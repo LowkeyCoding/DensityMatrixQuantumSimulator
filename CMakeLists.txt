@@ -3,6 +3,7 @@ project(DensityMatrixQuantumSimulator)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 set(CMAKE_CXX_STANDARD_EXTENSIONS FALSE)
+set(DMQS_EX TRUE)
 
 # Global compile options
 set(CMAKE_CXX_STANDARD 23)
@@ -11,12 +12,15 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wpedantic -Wall -Wextra -O3")  # use -L
 include(cmake/sanitizers.cmake)
 include(cmake/armadillo.cmake)
 find_package(OpenBLAS REQUIRED)
-find_package(LAPACK REQUIRED)
 
 include_directories(include)
 # Add subdirectories
 add_subdirectory(src)
 add_subdirectory(bindings)
+if(DMQS_EX)
+    add_executable(densecoding examples/densecoding.cpp)
+    target_link_libraries(densecoding dmqs_uppaal)
+endif()
 
 include(cmake/doctest.cmake)
 enable_testing()
