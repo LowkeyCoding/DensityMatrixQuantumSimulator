@@ -18,7 +18,7 @@ ctest --test-dir build-release --output-on-failure
 ```
 
 ## UPPAAL
-UPPAAL definitions for a 2 qubit system. To scale array size to `N` qubit system use the following equation `size = (pow(2, N)*pow(2, N))*2`.
+UPPAAL definitions for a 2 qubit system. To scale array size to `N` qubit system use the following equation `size = pow(2, 2*N+1)`.
 ```cpp
 int ID = 0;
 int X = 1;
