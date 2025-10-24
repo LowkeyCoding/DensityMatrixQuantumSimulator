@@ -28,9 +28,8 @@ TEST_CASE("State intializer"){
     UInitBinState(r11, qubits, "11");
     CHECK(equal(begin(r11), end(r11), begin(c11)));
     // | 0 0 >
-    //   ⮤ LSB (index 0)
+    //   ⮤ (index 0)
     //     ⮤ (index 1)
-    // therefore "10" = 1 and "01" = 2;
     SUBCASE("sample states"){
         double random[20] = {0.0045, 0.7908, 0.9903, 0.1085, 0.8035, 0.6303, 0.2853, 0.1125, 0.3623, 0.5738, 0.9714, 0.1138, 0.9487, 0.3961, 0.0949, 0.0730, 0.3724, 0.5300, 0.9606, 0.8233};
         for (int i = 0; i < 20; i++) {
@@ -126,11 +125,13 @@ TEST_CASE("Basis Projections") {
     double r01[32] = {0};
     double r10[32] = {0};
     double r11[32] = {0};
+    
     UInitBinState(r00, qc, "00");
     UInitBinState(r01, qc, "01");
     UInitBinState(r10, qc, "10");
     UInitBinState(r11, qc, "11");
     UInitBinState(rho, qc, "00");
+
     SUBCASE("00"){
         UApplyGate(rho, qc, GH,0);
         UApplyGate(rho, qc, GH,1);
@@ -183,6 +184,108 @@ TEST_CASE("Basis Projections") {
     }
 }
 
+TEST_CASE("Partial Sample") {
+    double rho[512] = {0};  // 4 qubits
+    int qc = 4;
+    UInitBinState(rho, qc, "1010");
+    UApplyGate(rho, qc, GH, 0); // |+010>
+    UApplyGate(rho, qc, GH, 1); // |+-10>
+
+    SUBCASE("One Target") {
+        int targets[1] = {0};
+        SUBCASE("0") {
+            int sample = UPartialMeasure(rho, qc, targets, 1, 0.51); // collapse to 1
+            CHECK(sample == 1);
+            sample = UPartialMeasure(rho, qc, targets, 1, 0.49); // collapse to 0
+            CHECK(sample == 0);
+        }
+        SUBCASE("1") {
+            targets[0] = 1;
+            int sample = UPartialMeasure(rho, qc, targets, 1, 0.51); // collapse to 1
+            CHECK(sample == 1);
+            sample = UPartialMeasure(rho, qc, targets, 1, 0.49); // collapse to 0
+            CHECK(sample == 0);
+        }
+        SUBCASE("2") {
+            targets[0] = 2;
+            int sample = UPartialMeasure(rho, qc, targets, 1, 0.51); // collapse to 1
+            CHECK(sample == 1);
+            sample = UPartialMeasure(rho, qc, targets, 1, 0.49); // collapse to 1
+            CHECK(sample == 1);
+        }
+        SUBCASE("3") {
+            targets[0] = 3;
+            int sample = UPartialMeasure(rho, qc, targets, 1, 0.51); // collapse to 0
+            CHECK(sample == 0);
+            sample = UPartialMeasure(rho, qc, targets, 1, 0.49); // collapse to 0
+            CHECK(sample == 0);
+        }
+    }
+    SUBCASE("Two Targets") {
+        int targets[2] = {0};
+        SUBCASE("0,1") {
+            targets[1] = 1; 
+            int sample1 = UPartialMeasure(rho, qc, targets, 2, 0.0);
+            int sample2 = UPartialMeasure(rho, qc, targets, 2, 0.26);
+            int sample3 = UPartialMeasure(rho, qc, targets, 2, 0.51);
+            int sample4 = UPartialMeasure(rho, qc, targets, 2, 0.76);
+            CHECK(sample1 == 0);
+            CHECK(sample2 == 1);
+            CHECK(sample3 == 2);
+            CHECK(sample4 == 3);
+        }
+        SUBCASE("2,3") {
+            targets[0] = 2;
+            targets[1] = 3;
+            int sample1 = UPartialMeasure(rho, qc, targets, 2, 0.0);
+            int sample2 = UPartialMeasure(rho, qc, targets, 2, 0.51);
+            CHECK(sample1 == 2);
+            CHECK(sample2 == 2);
+        }
+        SUBCASE("0,3") {
+            targets[1] = 3;
+            int sample1 = UPartialMeasure(rho, qc, targets, 2, 0.0);
+            int sample2 = UPartialMeasure(rho, qc, targets, 2, 0.51);
+            CHECK(sample1 == 0);
+            CHECK(sample2 == 2);
+        }
+        SUBCASE("1,2") {
+            targets[0] = 1;
+            targets[1] = 2;
+            int sample1 = UPartialMeasure(rho, qc, targets, 2, 0.0);
+            int sample2 = UPartialMeasure(rho, qc, targets, 2, 0.51);
+            CHECK(sample1 == 1);
+            CHECK(sample2 == 3);
+        }
+    }
+    SUBCASE("Three Targets") {
+        int targets[3] = {0};
+        
+        SUBCASE("0,1,2") {
+            targets[1] = 1;
+            targets[2] = 2;
+            int sample1 = UPartialMeasure(rho, qc, targets, 3, 0.0);
+            int sample2 = UPartialMeasure(rho, qc, targets, 3, 0.26);
+            int sample3 = UPartialMeasure(rho, qc, targets, 3, 0.51);
+            int sample4 = UPartialMeasure(rho, qc, targets, 3, 0.76);
+            CHECK(sample1 == 1);
+            CHECK(sample2 == 3);
+            CHECK(sample3 == 5);
+            CHECK(sample4 == 7);
+        }
+
+        SUBCASE("1,2,3") {
+            targets[0] = 1;
+            targets[1] = 2;
+            targets[2] = 3;
+            int sample1 = UPartialMeasure(rho, qc, targets, 3, 0.0);
+            int sample2 = UPartialMeasure(rho, qc, targets, 3, 0.51);
+            CHECK(sample1 == 2);
+            CHECK(sample2 == 6);
+        }
+    }
+}
+
 
 TEST_CASE("Partial Trace 2 qubit") {
     double cb0[8] = {0};
@@ -199,6 +302,7 @@ TEST_CASE("Partial Trace 2 qubit") {
     UPartialTrace(r01, 2, rt, 1, targets, 1);
     CHECK(cmp(rt, cb0, 8, EXACT));
 }
+
 TEST_CASE("Partial Trace 3 qubit") {
     double cm1[32] = {0};
     UInitBinState(cm1, 2, "01");

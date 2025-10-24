@@ -36,7 +36,6 @@ extern "C" void UApplyUnitary(double* rho, int rho_size, double* U, int u_size) 
     memcpy(rho, res.memptr(), mat_size*sizeof(double));
 }
 
-
 extern "C" void UPartialTrace(double* rho, int rho_size, double* prho, int prho_size, int* targets, int targets_size) {
     if (prho_size != targets_size) {
         throw invalid_argument("The partial density matrix should have the same size as the number of targets. Got " + to_string(rho_size) + " and " + to_string(targets_size)); 
@@ -57,7 +56,6 @@ extern "C" void UBasisProjection(double* rho, int rho_size, int target, int base
     memcpy(rho, res.memptr(), mat_size*sizeof(double));
 }
 
-
 extern "C" void UBasisProjections(double* rho, int rho_size, int* targets, int targets_size, int state) {
     int mat_row = pow(2, rho_size);
     int mat_size = mat_row * mat_row * 2;
@@ -67,17 +65,17 @@ extern "C" void UBasisProjections(double* rho, int rho_size, int* targets, int t
     memcpy(rho, res.memptr(), mat_size*sizeof(double));
 }
 
-extern "C" int UPartialMeasure(double* rho, int rho_size, int* targets, int targets_size, double random){
+extern "C" int UPartialMeasure(double* rho, int rho_size, int* targets, int targets_size, double r){
     int mat_row = pow(2, rho_size);
     cx_mat in_mat = cx_mat((cx_double*)rho, mat_row,mat_row, false, true);
     vector<int> t = vector<int>(targets, targets + targets_size);
-    return PartialSample(in_mat, t, random);
+    return PartialSample(in_mat, t, r);
 }
 
-extern "C" int UMeasureAll(double* rho, int rho_size, double random_value) {
+extern "C" int UMeasureAll(double* rho, int rho_size, double r) {
     int mat_row = pow(2, rho_size);
     cx_mat in_mat = cx_mat((cx_double*)rho, mat_row,mat_row, false, true);
-    return Sample(in_mat,random_value);
+    return Sample(in_mat, r);
 }
 
 extern "C" void UAmplitudeDampeningAndDephasing(double* rho, int rho_size, double* T1, double* T2, double t){
