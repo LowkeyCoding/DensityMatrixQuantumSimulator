@@ -7,16 +7,16 @@ cx_mat BinaryStringToDensityMatrix(const string bin){
     int n = bin.length();
 
     cx_mat density_matrix;
-    cx_mat plus = ApplyGate(B0(), GH, 0);
-    cx_mat minus = ApplyGate(B1(), GH, 0);
+    cx_mat P = ApplyGate(B0(), GH, 0);
+    cx_mat M = ApplyGate(B1(), GH, 0);
     if (bin[0] == '0') {
         density_matrix = B0();
     } else if (bin[0] == '1') {
         density_matrix = B1();
-    } else if (bin[0] == '-') {
-        density_matrix = ApplyGate(B0(), GH, 0);
     } else if (bin[0] == '+') {
-        density_matrix = ApplyGate(B1(), GH, 0);
+        density_matrix = P;
+    } else if (bin[0] == '-') {
+        density_matrix = M;
     }
     for (int i = 1; i < n; i++) {
         if (bin[i] == '0') {
@@ -24,9 +24,9 @@ cx_mat BinaryStringToDensityMatrix(const string bin){
         } else if (bin[i] == '1') {
             density_matrix = kron(density_matrix, B1());
         } else if (bin[i] == '+') {
-            density_matrix = kron(density_matrix, plus);
+            density_matrix = kron(density_matrix, P);
         } else if (bin[i] == '-') {
-            density_matrix = kron(density_matrix, minus);
+            density_matrix = kron(density_matrix, M);
         }
     }
     
