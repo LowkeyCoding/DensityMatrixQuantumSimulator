@@ -48,7 +48,7 @@ import "build-release/bindings/libdmqs_uppaal.so" {
     void UBasisProjections(double& rho[32], int rho_size, int& targets[1], int targets_size, int state);
     // Returns an int containing the result of the measurement of the target qubits in the density matrix rho. 
     // If it is needed to project the result on to rho use UBasisProjections.
-    extern "C" int UPartialMeasure(double& rho[32], int rho_size, int& targets[1], int targets_size, double r);
+    int UPartialMeasure(double& rho[32], int rho_size, int& targets[1], int targets_size, double r);
     // Returns an int containing the result of the measurement of all the qubits in the density matrix rho. 
     // If it is needed to project the result on to rho use UBasisProjections with all qubits as targets.
     int UMeasureAll(double& rho[32], int rho_size, double random_value);
