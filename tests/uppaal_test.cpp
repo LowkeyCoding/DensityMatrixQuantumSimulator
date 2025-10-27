@@ -68,6 +68,7 @@ TEST_CASE("Apply Gate") {
     UInitBinState(b0, 1, "0");
     double b1[8] = {0};
     UInitBinState(b1, 1, "1");
+    double cbh[8] = {0.5,0,0.5,0,0.5,0,0.5,0};
     int size = 8;
     SUBCASE("X Gate") {
         UApplyGate(b0, 1, GX, 0);
@@ -111,6 +112,47 @@ TEST_CASE("Apply Gate") {
         UApplyGate(b1, 1, GZ, 0);
         // 1 Z Z == 1
         CHECK(cmp(b1, cb1, size, EXACT));
+    }
+    SUBCASE("H Gate") {
+        UApplyGate(b0, 1, GH, 0);
+        // 0 H == bh
+        INFO(b0);
+        CHECK(cmp(b0, cbh, size, EXACT));
+        UApplyGate(b0, 1, GH, 0);
+        // 0 H H == 0
+        CHECK(cmp(b0, cb0, size, DEC14));
+        UApplyGate(b1, 1, GH, 0);
+        // 1 H == bh
+        CHECK(cmp(b1, cbh, size, EXACT));
+        UApplyGate(b1, 1, GH, 0);
+        // 1 H H == 1
+        CHECK(cmp(b1, cb1, size, DEC14));
+    }
+}
+
+TEST_CASE("Apply Controlled Gate") {
+    double cb00[32] = {0};
+    UInitBinState(cb00, 2, "00");
+    double cb11[32] = {0};
+    UInitBinState(cb11, 2, "11");
+    double b00[32] = {0};
+    UInitBinState(b00, 2, "00");
+    double b11[32] = {0};
+    UInitBinState(b11, 2, "11");
+    int size = 32;
+    SUBCASE("CX 0,1") {
+        /*UApplyCGate(b00, 2, GCX, 0, 1);
+        CHECK(cmp(b00, cb00, size, EXACT));
+        UApplyGate(b00, 2, GX, 0);
+        UApplyCGate(b00, 2, GCX, 0, 1);
+        CHECK(cmp(b00, cb11, size, EXACT));*/
+    }
+    SUBCASE("CX 1,0") {
+        //UApplyCGate(b00, 2, GCX, 1, 0);
+        //CHECK(cmp(b00, cb00, size, EXACT));
+        UApplyGate(b00, 2, GX, 1);
+        UApplyCGate(b00, 2, GCX, 1, 0);
+        CHECK(cmp(b00, cb11, size, EXACT));
     }
 }
 
@@ -344,9 +386,5 @@ TEST_CASE("Quantum Teleportation") {
     INFO("State after teleportation: \n", rho);
     INFO("Final qubit:\n", qtele);
     CHECK(cmp(qpsi,qtele,8, DEC14));
-
-}
-
-TEST_CASE("Apply Noise") {
 
 }

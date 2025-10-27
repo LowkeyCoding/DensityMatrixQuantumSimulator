@@ -23,6 +23,7 @@ extern "C" void UApplyGate(double* rho, int rho_size, int gate, int target) {
 extern "C" void UApplyCGate(double* rho, int rho_size, int gate, int control, int target) {
     int mat_row = pow(2, rho_size);
     int mat_size = mat_row * mat_row * 2;
+    cout << "UapplyCGate: " << mat_size << endl;
     cx_mat in_mat = cx_mat((cx_double*)rho, mat_row,mat_row, false, true);
     cx_mat res = ApplyCGate(in_mat, static_cast<u_gate>(gate), control, target);
     memcpy(rho, res.memptr(), mat_size*sizeof(double));

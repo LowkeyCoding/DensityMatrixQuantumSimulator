@@ -80,28 +80,28 @@ TEST_CASE("Controlled Gates Test") {
     }
     
     SUBCASE("Controled Z Gate ") {
-        auto CZ12_T1 = ApplyGateToDensityMatrix(states["10"], CG(Y(), 1, 2));
-        auto CZ12_F1 = ApplyGateToDensityMatrix(states["10"], CG(Z(), 1, 2));
+        auto CZ12_T1 = ApplyGateToDensityMatrix(states["10"], CG(Y(), 0, 1));
+        auto CZ12_F1 = ApplyGateToDensityMatrix(states["10"], CG(Z(), 0, 1));
     }
     SUBCASE("q2 > q1") {
-        auto C21_T1 = ApplyGateToDensityMatrix(states["11"], CG(X(), 2, 1));
-        auto C21_F1 = ApplyGateToDensityMatrix(states["10"], CG(X(), 2, 1));
+        auto C21_T1 = ApplyGateToDensityMatrix(states["11"], CG(X(), 1, 0));
+        auto C21_F1 = ApplyGateToDensityMatrix(states["10"], CG(X(), 1, 0));
         
-        auto C21_T0 = ApplyGateToDensityMatrix(states["01"], CG(X(), 2, 1));
-        auto C21_F0 = ApplyGateToDensityMatrix(states["00"], CG(X(), 2, 1));
+        auto C21_T0 = ApplyGateToDensityMatrix(states["01"], CG(X(), 1, 0));
+        auto C21_F0 = ApplyGateToDensityMatrix(states["00"], CG(X(), 1, 0));
 
-        auto C31_T1 = ApplyGateToDensityMatrix(states["111"], CG(X(), 3, 1));
-        auto C31_F1 = ApplyGateToDensityMatrix(states["110"], CG(X(), 3, 1));
+        auto C31_T1 = ApplyGateToDensityMatrix(states["111"], CG(X(), 2, 0));
+        auto C31_F1 = ApplyGateToDensityMatrix(states["110"], CG(X(), 2, 0));
 
-        auto C31_T0 = ApplyGateToDensityMatrix(states["011"], CG(X(), 3, 1));
-        auto C31_F0 = ApplyGateToDensityMatrix(states["010"], CG(X(), 3, 1));
+        auto C31_T0 = ApplyGateToDensityMatrix(states["011"], CG(X(), 2, 0));
+        auto C31_F0 = ApplyGateToDensityMatrix(states["010"], CG(X(), 2, 0));
 
         // Should create a function that given the state, gate and the first qubit to attach to will resize the gate such that both matrixes are of the same size.
-        auto C32_T1 = ApplyGateToDensityMatrix(states["011"], kron(Id(),CG(X(), 3, 2)));
-        auto C32_F1 = ApplyGateToDensityMatrix(states["010"], kron(Id(),CG(X(), 3, 2)));
+        auto C32_T1 = ApplyGateToDensityMatrix(states["011"], kron(Id(),CG(X(), 2, 1)));
+        auto C32_F1 = ApplyGateToDensityMatrix(states["010"], kron(Id(),CG(X(), 2, 1)));
         
         // Is CX 1,2 still CX
-        CHECK(mat_eq(CG(X(),1,2), CX(), EXACT));
+        CHECK(mat_eq(CG(X(),0,1), CX(), EXACT));
         
         CHECK(mat_eq(C21_T1, states["01"], EXACT));
         CHECK(mat_eq(C21_F1, states["10"], EXACT));

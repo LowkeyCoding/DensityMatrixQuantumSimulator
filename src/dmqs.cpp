@@ -100,14 +100,12 @@ cx_mat ApplyCGate(cx_mat rho, u_gate gate, int control, int target) {
             throw invalid_argument("ApplyCGate " + to_string((int)gate) + " is an invalid gate");
             break;
     }
-    if (control > 0){
-        U = kron(Id(control), U);
-    }
-    int diff = qubit_count - target - 1;
-    if (diff > 0) {
-        U = kron(U,Id(diff));
-    }
-
+    int min_qb = min(control, target);
+    if(min_qb > 0)
+        U = kron(Id(min_qb), U);
+    int diff = qubit_count - max(control, target) -1;
+    if (diff > 0) 
+        U = kron(U, Id(diff));
     return ApplyGateToDensityMatrix(rho, U);
 }
 
