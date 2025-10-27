@@ -197,24 +197,24 @@ cx_mat BasisProjection(const cx_mat rho, int target, int state) {
 
 cx_mat BasisProjections(const cx_mat rho, vector<int> targets, int state) {
     int j = 0;
-    cx_mat UT = Id();
+    int qc = ceil(log2(rho.n_rows));
+    cx_mat U = Id();
+    int bit_pos = targets.size() - j - 1;
     if (targets[j] == 0) {
-        UT = 1 & state ? B1() : B0();
-        state = state >> 1; 
+        U = (1 << bit_pos) & state ? B1() : B0();
         j++;
     }
-    int qc = ceil(log2(rho.n_rows));
     for(int i = 1; i < qc; i++) {
+        bit_pos = targets.size() - j - 1;
         if(i == targets[j]) {
-            cx_mat B = 1 & state ? B1() : B0();  
-            UT = kron(B, UT);
-            state = state >> 1; 
+            cx_mat B = (1 << bit_pos) & state ? B1() : B0();
+            U = kron(U, B);
             j++; 
         } else {
-            UT = kron(Id(),UT);
+            U = kron(U, Id());
         }
     }
-    cx_mat rho_projected = ApplyGateToDensityMatrix(rho, UT);
+    cx_mat rho_projected = ApplyGateToDensityMatrix(rho, U);
     
     // Normalize by trace
     cx_double trace_val = trace(rho_projected);

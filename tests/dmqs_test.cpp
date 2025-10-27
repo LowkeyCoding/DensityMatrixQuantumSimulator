@@ -184,7 +184,6 @@ TEST_CASE("Quantum Teleportation") {
     int sample = PartialSample(rho, {0,1}, 0.8); // 11
     INFO("Sampled state: ", sample);
     rho = BasisProjections(rho, {0,1}, sample);
-    cout << "Rho after projection: \n" <<  rho << endl;
     rho = ApplyGate(rho, GX, 2);
     rho = ApplyGate(rho, GZ, 2);
     cx_mat qtele = PartialTrace(rho,{2});

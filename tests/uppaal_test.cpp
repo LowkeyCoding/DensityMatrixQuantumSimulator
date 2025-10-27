@@ -336,8 +336,7 @@ TEST_CASE("Quantum Teleportation") {
     int measure[2] = {0,1};
     int sample = UPartialMeasure(rho, qc, measure, 2, 0.8); // 11
     INFO("Sampled state: ", sample);
-    UBasisProjection(rho, qc, 0, 1);
-    UBasisProjection(rho, qc, 1, 1);
+    UBasisProjections(rho, qc, measure, 2, sample);
     UApplyGate(rho, qc, GX, 2);
     UApplyGate(rho, qc, GZ, 2);
     double qtele[8] = {0}; 
@@ -348,7 +347,6 @@ TEST_CASE("Quantum Teleportation") {
     CHECK(cmp(qpsi,qtele,8, DEC14));
 
 }
-
 
 TEST_CASE("Apply Noise") {
 
