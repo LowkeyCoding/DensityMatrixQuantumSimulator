@@ -9,15 +9,23 @@ cx_mat BinaryStringToDensityMatrix(const string bin){
     cx_mat density_matrix;
     if (bin[0] == '0') {
         density_matrix = B0();
-    } else {
+    } else if (bin[0] == '1') {
         density_matrix = B1();
+    } else if (bin[0] == '-') {
+        density_matrix = ApplyGate(B0, GH);
+    } else {
+        density_matrix = ApplyGate(B1, GH);
     }
 
     for (int i = 1; i < n; i++) {
         if (bin[i] == '0') {
             density_matrix = kron(density_matrix, B0());
-        } else {
+        } else if (bin[0] == '1') {
             density_matrix = kron(density_matrix, B1());
+        } else if (bin[0] == '-') {
+            density_matrix = ApplyGate(B0, GH);
+        } else {
+            density_matrix = ApplyGate(B1, GH);
         }
     }
     
@@ -54,52 +62,34 @@ bool IsPure(cx_mat rho, double delta) {
 }
 
 
-cx_mat ApplyGate(cx_mat rho, u_gate gate, int qubit) {
-    int qubit_count = ceil(log2(rho.n_rows));
-    cx_mat U;
+cx_mat UGateToGate(u_gate gate) {
     switch (gate) {
-        case GID:
-            U = Id();
-            break;
         case GX:
-            U = X();
+            return X()
             break;
         case GY:
-            U = Y();
+            return Y()
             break;
         case GZ:
-            U = Z();
+            return Z()
             break;
         case GH:
-            U = H();
+            return H()
             break;
         default:
-            throw invalid_argument("ApplyGate " + to_string((int)gate) + " is an invalid gate");
+            throw invalid_argument("UGateToGate " + to_string((int)gate) + " is an invalid gate");
             break;
     }
-    return ApplyGateToDensityMatrix(rho, GateToNQubitSystem(U,qubit,qubit_count));
+}
+
+cx_mat ApplyGate(cx_mat rho, u_gate gate, int qubit) {
+    int qubit_count = ceil(log2(rho.n_rows));
+    return ApplyGateToDensityMatrix(rho, GateToNQubitSystem(UGateToGate(gate),qubit,qubit_count));
 }
 
 cx_mat ApplyCGate(cx_mat rho, u_gate gate, int control, int target) {
     int qubit_count = ceil(log2(rho.n_rows));
-    cx_mat U;
-    switch (gate) {
-        case GX:
-            U = CG(X(),control,target);
-            break;
-        case GY:
-            U = CG(Y(),control,target);
-            break;
-        case GZ:
-            U = CG(Z(),control,target);
-            break;
-        case GH:
-            U = CG(H(),control,target);
-            break;
-        default:
-            throw invalid_argument("ApplyCGate " + to_string((int)gate) + " is an invalid gate");
-            break;
-    }
+    cx_mat U = CG(UGateToGate(gate), control, target);
     int min_qb = min(control, target);
     if(min_qb > 0)
         U = kron(Id(min_qb), U);
