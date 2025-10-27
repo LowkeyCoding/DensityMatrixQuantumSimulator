@@ -286,7 +286,6 @@ TEST_CASE("Partial Sample") {
     }
 }
 
-
 TEST_CASE("Partial Trace 2 qubit") {
     double cb0[8] = {0};
     UInitBinState(cb0, 1, "0");
