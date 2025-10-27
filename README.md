@@ -25,10 +25,6 @@ int X = 1;
 int Y = 2;
 int Z = 3;
 int H = 4;
-int CX = 5;
-int CY = 6;
-int CZ = 7;
-int CH = 8;
 
 import "build-release/bindings/libdmqs_uppaal.so" {
     // Takes a binary string and overwrites rho with a density matrix encoding that state.

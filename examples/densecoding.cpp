@@ -9,13 +9,13 @@ int main() {
         UInitBinState(test, 2, "00");
         UApplyGate(test, 2, GH, 0);
         UAmplitudeDampeningAndDephasing(test, 2, T1, T2, 1);
-        UApplyCGate(test, 2, GCX, 0, 1);
+        UApplyCGate(test, 2, GX, 0, 1);
         UAmplitudeDampeningAndDephasing(test, 2, T1, T2, 1);
         UApplyGate(test, 2, GX,0);
         UAmplitudeDampeningAndDephasing(test, 2, T1, T2, 1);
         UApplyGate(test, 2, GZ,0);
         UAmplitudeDampeningAndDephasing(test, 2, T1, T2, 1);
-        UApplyCGate(test, 2, GCX, 0, 1);
+        UApplyCGate(test, 2, GX, 0, 1);
         UAmplitudeDampeningAndDephasing(test, 2, T1, T2, 1);
         UApplyGate(test, 2, GH, 0);
         UAmplitudeDampeningAndDephasing(test, 2, T1, T2, 1);

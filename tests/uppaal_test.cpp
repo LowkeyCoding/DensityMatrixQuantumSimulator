@@ -141,17 +141,17 @@ TEST_CASE("Apply Controlled Gate") {
     UInitBinState(b11, 2, "11");
     int size = 32;
     SUBCASE("CX 0,1") {
-        UApplyCGate(b00, 2, GCX, 0, 1);
+        UApplyCGate(b00, 2, GX, 0, 1);
         CHECK(cmp(b00, cb00, size, EXACT));
         UApplyGate(b00, 2, GX, 0);
-        UApplyCGate(b00, 2, GCX, 0, 1);
+        UApplyCGate(b00, 2, GX, 0, 1);
         CHECK(cmp(b00, cb11, size, EXACT));
     }
     SUBCASE("CX 1,0") {
-        UApplyCGate(b00, 2, GCX, 1, 0);
+        UApplyCGate(b00, 2, GX, 1, 0);
         CHECK(cmp(b00, cb00, size, EXACT));
         UApplyGate(b00, 2, GX, 1);
-        UApplyCGate(b00, 2, GCX, 1, 0);
+        UApplyCGate(b00, 2, GX, 1, 0);
         CHECK(cmp(b00, cb11, size, EXACT));
     }
 }
@@ -371,8 +371,8 @@ TEST_CASE("Quantum Teleportation") {
     UPartialTrace(rho, qc, qpsi, 1, target, 1);
     INFO("Input qubit:\n", qpsi);
     UApplyGate(rho, qc, GH, 1);
-    UApplyCGate(rho, qc, GCX,1,2);
-    UApplyCGate(rho, qc, GCX,0,1);
+    UApplyCGate(rho, qc, GX,1,2);
+    UApplyCGate(rho, qc, GX,0,1);
     UApplyGate(rho, qc, GH,0);
     int measure[2] = {0,1};
     int sample = UPartialMeasure(rho, qc, measure, 2, 0.8); // 11

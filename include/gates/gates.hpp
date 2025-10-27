@@ -10,10 +10,6 @@ enum u_gate {
   GY,
   GZ,
   GH,
-  GCX,
-  GCY,
-  GCZ,
-  GCH,
   GB0,
   GB1,
 };

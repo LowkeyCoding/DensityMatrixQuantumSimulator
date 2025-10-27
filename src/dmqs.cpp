@@ -84,16 +84,16 @@ cx_mat ApplyCGate(cx_mat rho, u_gate gate, int control, int target) {
     int qubit_count = ceil(log2(rho.n_rows));
     cx_mat U;
     switch (gate) {
-        case GCX:
+        case GX:
             U = CG(X(),control,target);
             break;
-        case GCY:
+        case GY:
             U = CG(Y(),control,target);
             break;
-        case GCZ:
+        case GZ:
             U = CG(Z(),control,target);
             break;
-        case GCH:
+        case GH:
             U = CG(H(),control,target);
             break;
         default:

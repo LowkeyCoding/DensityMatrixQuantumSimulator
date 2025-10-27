@@ -40,9 +40,9 @@ TEST_CASE("Test generating state from binary string") {
         // TODO: Add more tests
         cx_mat t1 = ApplyGate(c00, GX, 0);
         cx_mat t2 = ApplyGate(c00, GX, 1);
-        cx_mat t3 = ApplyCGate(c00, GCX, 0,1);
-        cx_mat t4 = ApplyCGate(c10, GCX, 0,1);
-        cx_mat t5 = ApplyCGate(c11, GCX, 0,1);
+        cx_mat t3 = ApplyCGate(c00, GX, 0,1);
+        cx_mat t4 = ApplyCGate(c10, GX, 0,1);
+        cx_mat t5 = ApplyCGate(c11, GX, 0,1);
 
         CHECK(mat_eq(t1, c10, EXACT));
         CHECK(mat_eq(t2, c01, EXACT));
@@ -65,7 +65,6 @@ TEST_CASE("Rotation Gates") {
 }
 
 TEST_CASE("Controlled Gates Test") {
-
     map<string, cx_mat> states = {};
     // Generate all binary strings of size 2 and 3.
     for (int n = 2; n < 4; n++) {
@@ -103,32 +102,32 @@ TEST_CASE("Controlled Gates Test") {
         CHECK(mat_eq(C01_T1, states["10"], EXACT));
         CHECK(mat_eq(C01_F1, states["01"], EXACT));
         
-        CHECK(mat_eq(C01_T1, ApplyCGate(states["11"], GCX, 0, 1), EXACT));
-        CHECK(mat_eq(C01_F1, ApplyCGate(states["01"], GCX, 0, 1), EXACT));
+        CHECK(mat_eq(C01_T1, ApplyCGate(states["11"], GX, 0, 1), EXACT));
+        CHECK(mat_eq(C01_F1, ApplyCGate(states["01"], GX, 0, 1), EXACT));
 
         CHECK(mat_eq(C01_T0, states["11"], EXACT));
         CHECK(mat_eq(C01_F0, states["00"], EXACT));
 
-        CHECK(mat_eq(C01_T0, ApplyCGate(states["10"], GCX, 0, 1), EXACT));
-        CHECK(mat_eq(C01_F0, ApplyCGate(states["00"], GCX, 0, 1), EXACT));
+        CHECK(mat_eq(C01_T0, ApplyCGate(states["10"], GX, 0, 1), EXACT));
+        CHECK(mat_eq(C01_F0, ApplyCGate(states["00"], GX, 0, 1), EXACT));
 
         CHECK(mat_eq(C02_T1, states["110"], EXACT));
         CHECK(mat_eq(C02_F1, states["011"], EXACT));
 
-        CHECK(mat_eq(C02_T1, ApplyCGate(states["111"], GCX, 0, 2), EXACT));
-        CHECK(mat_eq(C02_F1, ApplyCGate(states["011"], GCX, 0, 2), EXACT));
+        CHECK(mat_eq(C02_T1, ApplyCGate(states["111"], GX, 0, 2), EXACT));
+        CHECK(mat_eq(C02_F1, ApplyCGate(states["011"], GX, 0, 2), EXACT));
 
         CHECK(mat_eq(C02_T0, states["111"], EXACT));
         CHECK(mat_eq(C02_F0, states["010"], EXACT));
 
-        CHECK(mat_eq(C02_T0, ApplyCGate(states["110"], GCX, 0, 2), EXACT));
-        CHECK(mat_eq(C02_F0, ApplyCGate(states["010"], GCX, 0, 2), EXACT));
+        CHECK(mat_eq(C02_T0, ApplyCGate(states["110"], GX, 0, 2), EXACT));
+        CHECK(mat_eq(C02_F0, ApplyCGate(states["010"], GX, 0, 2), EXACT));
 
         CHECK(mat_eq(C12_T1, states["010"], EXACT));
         CHECK(mat_eq(C12_F1, states["001"], EXACT));
 
-        CHECK(mat_eq(C12_T1, ApplyCGate(states["011"], GCX, 1, 2), EXACT));
-        CHECK(mat_eq(C12_F1, ApplyCGate(states["001"], GCX, 1, 2), EXACT));
+        CHECK(mat_eq(C12_T1, ApplyCGate(states["011"], GX, 1, 2), EXACT));
+        CHECK(mat_eq(C12_F1, ApplyCGate(states["001"], GX, 1, 2), EXACT));
     }
     
     SUBCASE("Control > Target") {
@@ -151,34 +150,35 @@ TEST_CASE("Controlled Gates Test") {
         CHECK(mat_eq(C10_T1, states["01"], EXACT));
         CHECK(mat_eq(C10_F1, states["10"], EXACT));
         
-        CHECK(mat_eq(C10_T1, ApplyCGate(states["11"], GCX, 1, 0), EXACT));
-        CHECK(mat_eq(C10_F1, ApplyCGate(states["10"], GCX, 1, 0), EXACT));
+        CHECK(mat_eq(C10_T1, ApplyCGate(states["11"], GX, 1, 0), EXACT));
+        CHECK(mat_eq(C10_F1, ApplyCGate(states["10"], GX, 1, 0), EXACT));
 
         CHECK(mat_eq(C10_T0, states["11"], EXACT));
         CHECK(mat_eq(C10_F0, states["00"], EXACT));
 
-        CHECK(mat_eq(C10_T0, ApplyCGate(states["01"], GCX, 1, 0), EXACT));
-        CHECK(mat_eq(C10_F0, ApplyCGate(states["00"], GCX, 1, 0), EXACT));
+        CHECK(mat_eq(C10_T0, ApplyCGate(states["01"], GX, 1, 0), EXACT));
+        CHECK(mat_eq(C10_F0, ApplyCGate(states["00"], GX, 1, 0), EXACT));
 
         CHECK(mat_eq(C20_T1, states["011"], EXACT));
         CHECK(mat_eq(C20_F1, states["110"], EXACT));
 
-        CHECK(mat_eq(C20_T1, ApplyCGate(states["111"], GCX, 2, 0), EXACT));
-        CHECK(mat_eq(C20_F1, ApplyCGate(states["110"], GCX, 2, 0), EXACT));
+        CHECK(mat_eq(C20_T1, ApplyCGate(states["111"], GX, 2, 0), EXACT));
+        CHECK(mat_eq(C20_F1, ApplyCGate(states["110"], GX, 2, 0), EXACT));
 
         CHECK(mat_eq(C20_T0, states["111"], EXACT));
         CHECK(mat_eq(C20_F0, states["010"], EXACT));
 
-        CHECK(mat_eq(C20_T0, ApplyCGate(states["011"], GCX, 2, 0), EXACT));
-        CHECK(mat_eq(C20_F0, ApplyCGate(states["010"], GCX, 2, 0), EXACT));
+        CHECK(mat_eq(C20_T0, ApplyCGate(states["011"], GX, 2, 0), EXACT));
+        CHECK(mat_eq(C20_F0, ApplyCGate(states["010"], GX, 2, 0), EXACT));
 
         CHECK(mat_eq(C21_T1, states["001"], EXACT));
         CHECK(mat_eq(C21_F1, states["010"], EXACT));
 
-        CHECK(mat_eq(C21_T1, ApplyCGate(states["011"], GCX, 2, 1), EXACT));
-        CHECK(mat_eq(C21_F1, ApplyCGate(states["010"], GCX, 2, 1), EXACT));
+        CHECK(mat_eq(C21_T1, ApplyCGate(states["011"], GX, 2, 1), EXACT));
+        CHECK(mat_eq(C21_F1, ApplyCGate(states["010"], GX, 2, 1), EXACT));
     }
 }
+
 TEST_CASE("Rearrange bits"){
     cx_double d0 = cx_double(0,0);
     cx_double d1 = cx_double(1,0);
@@ -238,8 +238,8 @@ TEST_CASE("Quantum Teleportation") {
     cx_mat qpsi = PartialTrace(rho,{0});
     INFO("Input qubit:\n", qpsi);
     rho = ApplyGate(rho, GH, 1);
-    rho = ApplyCGate(rho, GCX,1,2);
-    rho = ApplyCGate(rho, GCX,0,1);
+    rho = ApplyCGate(rho, GX,1,2);
+    rho = ApplyCGate(rho, GX,0,1);
     rho = ApplyGate(rho, GH,0);
     int sample = PartialSample(rho, {0,1}, 0.8); // 11
     INFO("Sampled state: ", sample);
