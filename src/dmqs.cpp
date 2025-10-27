@@ -7,25 +7,26 @@ cx_mat BinaryStringToDensityMatrix(const string bin){
     int n = bin.length();
 
     cx_mat density_matrix;
+    cx_mat plus = ApplyGate(B0(), GH, 0);
+    cx_mat minus = ApplyGate(B1(), GH, 0);
     if (bin[0] == '0') {
         density_matrix = B0();
     } else if (bin[0] == '1') {
         density_matrix = B1();
     } else if (bin[0] == '-') {
-        density_matrix = ApplyGate(B0, GH);
-    } else {
-        density_matrix = ApplyGate(B1, GH);
+        density_matrix = ApplyGate(B0(), GH, 0);
+    } else if (bin[0] == '+') {
+        density_matrix = ApplyGate(B1(), GH, 0);
     }
-
     for (int i = 1; i < n; i++) {
         if (bin[i] == '0') {
             density_matrix = kron(density_matrix, B0());
-        } else if (bin[0] == '1') {
+        } else if (bin[i] == '1') {
             density_matrix = kron(density_matrix, B1());
-        } else if (bin[0] == '-') {
-            density_matrix = ApplyGate(B0, GH);
-        } else {
-            density_matrix = ApplyGate(B1, GH);
+        } else if (bin[i] == '+') {
+            density_matrix = kron(density_matrix, plus);
+        } else if (bin[i] == '-') {
+            density_matrix = kron(density_matrix, minus);
         }
     }
     
@@ -65,16 +66,16 @@ bool IsPure(cx_mat rho, double delta) {
 cx_mat UGateToGate(u_gate gate) {
     switch (gate) {
         case GX:
-            return X()
+            return X();
             break;
         case GY:
-            return Y()
+            return Y();
             break;
         case GZ:
-            return Z()
+            return Z();
             break;
         case GH:
-            return H()
+            return H();
             break;
         default:
             throw invalid_argument("UGateToGate " + to_string((int)gate) + " is an invalid gate");
