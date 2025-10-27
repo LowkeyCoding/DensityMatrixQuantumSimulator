@@ -33,7 +33,7 @@ cx_mat GateToNQubitSystem(cx_mat U1, int target, int n){
     if (target > 0){
         U1 = kron(Id(target), U1);
     }
-    int diff = int(abs(target - n)) - 1;
+    int diff = n - target - 1;
     if (diff > 0) {
         U1 = kron(U1,Id(diff));
     }
@@ -80,34 +80,32 @@ cx_mat ApplyGate(cx_mat rho, u_gate gate, int qubit) {
     return ApplyGateToDensityMatrix(rho, GateToNQubitSystem(U,qubit,qubit_count));
 }
 
-cx_mat ApplyCGate(cx_mat rho, u_gate gate, int target, int control) {
+cx_mat ApplyCGate(cx_mat rho, u_gate gate, int control, int target) {
     int qubit_count = ceil(log2(rho.n_rows));
     cx_mat U;
     switch (gate) {
         case GCX:
-            U = CG(X(),target,control);
+            U = CG(X(),control,target);
             break;
         case GCY:
-            U = CG(Y(),target,control);
+            U = CG(Y(),control,target);
             break;
         case GCZ:
-            U = CG(Z(),target,control);;
+            U = CG(Z(),control,target);
             break;
         case GCH:
-            U = CG(H(),target,control);
+            U = CG(H(),control,target);
             break;
         default:
             throw invalid_argument("ApplyCGate " + to_string((int)gate) + " is an invalid gate");
             break;
     }
-    if (target > 0){
-        U = kron(Id(target), U);
-    }
-    int diff = int(abs(control - qubit_count)) - 1;
-    if (diff > 0) {
-        U = kron(U,Id(diff));
-    }
-
+    int min_qb = min(control, target);
+    if(min_qb > 0)
+        U = kron(Id(min_qb), U);
+    int diff = qubit_count - max(control, target) -1;
+    if (diff > 0) 
+        U = kron(U, Id(diff));
     return ApplyGateToDensityMatrix(rho, U);
 }
 
@@ -197,24 +195,24 @@ cx_mat BasisProjection(const cx_mat rho, int target, int state) {
 
 cx_mat BasisProjections(const cx_mat rho, vector<int> targets, int state) {
     int j = 0;
-    cx_mat UT = Id();
+    int qc = ceil(log2(rho.n_rows));
+    cx_mat U = Id();
+    int bit_pos = targets.size() - j - 1;
     if (targets[j] == 0) {
-        UT = 1 & state ? B1() : B0();
-        state = state >> 1; 
+        U = (1 << bit_pos) & state ? B1() : B0();
         j++;
     }
-    int qc = ceil(log2(rho.n_rows));
     for(int i = 1; i < qc; i++) {
+        bit_pos = targets.size() - j - 1;
         if(i == targets[j]) {
-            cx_mat B = 1 & state ? B1() : B0();  
-            UT = kron(UT, B);
-            state = state >> 1; 
+            cx_mat B = (1 << bit_pos) & state ? B1() : B0();
+            U = kron(U, B);
             j++; 
         } else {
-            UT = kron(UT, Id());
+            U = kron(U, Id());
         }
     }
-    cx_mat rho_projected = ApplyGateToDensityMatrix(rho, UT);
+    cx_mat rho_projected = ApplyGateToDensityMatrix(rho, U);
     
     // Normalize by trace
     cx_double trace_val = trace(rho_projected);

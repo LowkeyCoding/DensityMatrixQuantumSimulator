@@ -78,45 +78,105 @@ TEST_CASE("Controlled Gates Test") {
             states.insert({s, BinaryStringToDensityMatrix(s)});
         }
     }
-    
-    SUBCASE("Controled Z Gate ") {
-        auto CZ12_T1 = ApplyGateToDensityMatrix(states["10"], CG(Y(), 1, 2));
-        auto CZ12_F1 = ApplyGateToDensityMatrix(states["10"], CG(Z(), 1, 2));
+
+    SUBCASE("Generated CX is CX") {
+        CHECK(mat_eq(CG(X(),0,1), CX(), EXACT));
     }
-    SUBCASE("q2 > q1") {
-        auto C21_T1 = ApplyGateToDensityMatrix(states["11"], CG(X(), 2, 1));
-        auto C21_F1 = ApplyGateToDensityMatrix(states["10"], CG(X(), 2, 1));
+
+    SUBCASE("Target > Control") {
+        auto C01_T1 = ApplyGateToDensityMatrix(states["11"], CG(X(), 0, 1));
+        auto C01_F1 = ApplyGateToDensityMatrix(states["01"], CG(X(), 0, 1));
         
-        auto C21_T0 = ApplyGateToDensityMatrix(states["01"], CG(X(), 2, 1));
-        auto C21_F0 = ApplyGateToDensityMatrix(states["00"], CG(X(), 2, 1));
+        auto C01_T0 = ApplyGateToDensityMatrix(states["10"], CG(X(), 0, 1));
+        auto C01_F0 = ApplyGateToDensityMatrix(states["00"], CG(X(), 0, 1));
 
-        auto C31_T1 = ApplyGateToDensityMatrix(states["111"], CG(X(), 3, 1));
-        auto C31_F1 = ApplyGateToDensityMatrix(states["110"], CG(X(), 3, 1));
+        auto C02_T1 = ApplyGateToDensityMatrix(states["111"], CG(X(), 0, 2));
+        auto C02_F1 = ApplyGateToDensityMatrix(states["011"], CG(X(), 0, 2));
 
-        auto C31_T0 = ApplyGateToDensityMatrix(states["011"], CG(X(), 3, 1));
-        auto C31_F0 = ApplyGateToDensityMatrix(states["010"], CG(X(), 3, 1));
+        auto C02_T0 = ApplyGateToDensityMatrix(states["110"], CG(X(), 0, 2));
+        auto C02_F0 = ApplyGateToDensityMatrix(states["010"], CG(X(), 0, 2));
 
         // Should create a function that given the state, gate and the first qubit to attach to will resize the gate such that both matrixes are of the same size.
-        auto C32_T1 = ApplyGateToDensityMatrix(states["011"], kron(Id(),CG(X(), 3, 2)));
-        auto C32_F1 = ApplyGateToDensityMatrix(states["010"], kron(Id(),CG(X(), 3, 2)));
+        auto C12_T1 = ApplyGateToDensityMatrix(states["011"], kron(Id(),CG(X(), 1, 2)));
+        auto C12_F1 = ApplyGateToDensityMatrix(states["001"], kron(Id(),CG(X(), 1, 2)));
+
+        CHECK(mat_eq(C01_T1, states["10"], EXACT));
+        CHECK(mat_eq(C01_F1, states["01"], EXACT));
         
-        // Is CX 1,2 still CX
-        CHECK(mat_eq(CG(X(),1,2), CX(), EXACT));
+        CHECK(mat_eq(C01_T1, ApplyCGate(states["11"], GCX, 0, 1), EXACT));
+        CHECK(mat_eq(C01_F1, ApplyCGate(states["01"], GCX, 0, 1), EXACT));
+
+        CHECK(mat_eq(C01_T0, states["11"], EXACT));
+        CHECK(mat_eq(C01_F0, states["00"], EXACT));
+
+        CHECK(mat_eq(C01_T0, ApplyCGate(states["10"], GCX, 0, 1), EXACT));
+        CHECK(mat_eq(C01_F0, ApplyCGate(states["00"], GCX, 0, 1), EXACT));
+
+        CHECK(mat_eq(C02_T1, states["110"], EXACT));
+        CHECK(mat_eq(C02_F1, states["011"], EXACT));
+
+        CHECK(mat_eq(C02_T1, ApplyCGate(states["111"], GCX, 0, 2), EXACT));
+        CHECK(mat_eq(C02_F1, ApplyCGate(states["011"], GCX, 0, 2), EXACT));
+
+        CHECK(mat_eq(C02_T0, states["111"], EXACT));
+        CHECK(mat_eq(C02_F0, states["010"], EXACT));
+
+        CHECK(mat_eq(C02_T0, ApplyCGate(states["110"], GCX, 0, 2), EXACT));
+        CHECK(mat_eq(C02_F0, ApplyCGate(states["010"], GCX, 0, 2), EXACT));
+
+        CHECK(mat_eq(C12_T1, states["010"], EXACT));
+        CHECK(mat_eq(C12_F1, states["001"], EXACT));
+
+        CHECK(mat_eq(C12_T1, ApplyCGate(states["011"], GCX, 1, 2), EXACT));
+        CHECK(mat_eq(C12_F1, ApplyCGate(states["001"], GCX, 1, 2), EXACT));
+    }
+    
+    SUBCASE("Control > Target") {
+        auto C10_T1 = ApplyGateToDensityMatrix(states["11"], CG(X(), 1, 0));
+        auto C10_F1 = ApplyGateToDensityMatrix(states["10"], CG(X(), 1, 0));
         
-        CHECK(mat_eq(C21_T1, states["01"], EXACT));
-        CHECK(mat_eq(C21_F1, states["10"], EXACT));
+        auto C10_T0 = ApplyGateToDensityMatrix(states["01"], CG(X(), 1, 0));
+        auto C10_F0 = ApplyGateToDensityMatrix(states["00"], CG(X(), 1, 0));
 
-        CHECK(mat_eq(C21_T0, states["11"], EXACT));
-        CHECK(mat_eq(C21_F0, states["00"], EXACT));
+        auto C20_T1 = ApplyGateToDensityMatrix(states["111"], CG(X(), 2, 0));
+        auto C20_F1 = ApplyGateToDensityMatrix(states["110"], CG(X(), 2, 0));
 
-        CHECK(mat_eq(C31_T1, states["011"], EXACT));
-        CHECK(mat_eq(C31_F1, states["110"], EXACT));
+        auto C20_T0 = ApplyGateToDensityMatrix(states["011"], CG(X(), 2, 0));
+        auto C20_F0 = ApplyGateToDensityMatrix(states["010"], CG(X(), 2, 0));
 
-        CHECK(mat_eq(C31_T0, states["111"], EXACT));
-        CHECK(mat_eq(C31_F0, states["010"], EXACT));
+        // Should create a function that given the state, gate and the first qubit to attach to will resize the gate such that both matrixes are of the same size.
+        auto C21_T1 = ApplyGateToDensityMatrix(states["011"], kron(Id(),CG(X(), 2, 1)));
+        auto C21_F1 = ApplyGateToDensityMatrix(states["010"], kron(Id(),CG(X(), 2, 1)));
 
-        CHECK(mat_eq(C32_T1, states["001"], EXACT));
-        CHECK(mat_eq(C32_F1, states["010"], EXACT));
+        CHECK(mat_eq(C10_T1, states["01"], EXACT));
+        CHECK(mat_eq(C10_F1, states["10"], EXACT));
+        
+        CHECK(mat_eq(C10_T1, ApplyCGate(states["11"], GCX, 1, 0), EXACT));
+        CHECK(mat_eq(C10_F1, ApplyCGate(states["10"], GCX, 1, 0), EXACT));
+
+        CHECK(mat_eq(C10_T0, states["11"], EXACT));
+        CHECK(mat_eq(C10_F0, states["00"], EXACT));
+
+        CHECK(mat_eq(C10_T0, ApplyCGate(states["01"], GCX, 1, 0), EXACT));
+        CHECK(mat_eq(C10_F0, ApplyCGate(states["00"], GCX, 1, 0), EXACT));
+
+        CHECK(mat_eq(C20_T1, states["011"], EXACT));
+        CHECK(mat_eq(C20_F1, states["110"], EXACT));
+
+        CHECK(mat_eq(C20_T1, ApplyCGate(states["111"], GCX, 2, 0), EXACT));
+        CHECK(mat_eq(C20_F1, ApplyCGate(states["110"], GCX, 2, 0), EXACT));
+
+        CHECK(mat_eq(C20_T0, states["111"], EXACT));
+        CHECK(mat_eq(C20_F0, states["010"], EXACT));
+
+        CHECK(mat_eq(C20_T0, ApplyCGate(states["011"], GCX, 2, 0), EXACT));
+        CHECK(mat_eq(C20_F0, ApplyCGate(states["010"], GCX, 2, 0), EXACT));
+
+        CHECK(mat_eq(C21_T1, states["001"], EXACT));
+        CHECK(mat_eq(C21_F1, states["010"], EXACT));
+
+        CHECK(mat_eq(C21_T1, ApplyCGate(states["011"], GCX, 2, 1), EXACT));
+        CHECK(mat_eq(C21_F1, ApplyCGate(states["010"], GCX, 2, 1), EXACT));
     }
 }
 TEST_CASE("Rearrange bits"){
@@ -184,7 +244,6 @@ TEST_CASE("Quantum Teleportation") {
     int sample = PartialSample(rho, {0,1}, 0.8); // 11
     INFO("Sampled state: ", sample);
     rho = BasisProjections(rho, {0,1}, sample);
-    cout << "Rho after projection: \n" <<  rho << endl;
     rho = ApplyGate(rho, GX, 2);
     rho = ApplyGate(rho, GZ, 2);
     cx_mat qtele = PartialTrace(rho,{2});
