@@ -141,15 +141,15 @@ TEST_CASE("Apply Controlled Gate") {
     UInitBinState(b11, 2, "11");
     int size = 32;
     SUBCASE("CX 0,1") {
-        /*UApplyCGate(b00, 2, GCX, 0, 1);
+        UApplyCGate(b00, 2, GCX, 0, 1);
         CHECK(cmp(b00, cb00, size, EXACT));
         UApplyGate(b00, 2, GX, 0);
         UApplyCGate(b00, 2, GCX, 0, 1);
-        CHECK(cmp(b00, cb11, size, EXACT));*/
+        CHECK(cmp(b00, cb11, size, EXACT));
     }
     SUBCASE("CX 1,0") {
-        //UApplyCGate(b00, 2, GCX, 1, 0);
-        //CHECK(cmp(b00, cb00, size, EXACT));
+        UApplyCGate(b00, 2, GCX, 1, 0);
+        CHECK(cmp(b00, cb00, size, EXACT));
         UApplyGate(b00, 2, GX, 1);
         UApplyCGate(b00, 2, GCX, 1, 0);
         CHECK(cmp(b00, cb11, size, EXACT));
