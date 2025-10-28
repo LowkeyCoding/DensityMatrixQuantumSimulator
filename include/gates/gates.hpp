@@ -26,8 +26,8 @@ cx_mat Id(int n);
 cx_mat RX(double theta);
 cx_mat RY(double theta);
 cx_mat RZ(double theta);
-cx_mat CG(cx_mat gate, int q1, int q2);
+cx_mat CG(const cx_mat& gate, int q1, int q2);
 cx_mat SWAP(int q1, int q2);
 
-bool mat_eq(cx_mat rho1, cx_mat rho2, double delta);
-cx_mat adjoint(const cx_mat M);
+bool mat_eq(const cx_mat& rho1, const cx_mat& rho2, double delta);
+cx_mat adjoint(const cx_mat& M);

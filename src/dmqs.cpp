@@ -3,7 +3,7 @@
 /// @brief Takes a binary string and converts it into a density matrix with the basis state 01
 /// @param bin A binary string e.g "0101"
 /// @return The density matrix 
-cx_mat BinaryStringToDensityMatrix(const string bin){
+cx_mat BinaryStringToDensityMatrix(const string& bin){
     int n = bin.length();
 
     cx_mat density_matrix;
@@ -38,30 +38,30 @@ cx_mat BinaryStringToDensityMatrix(const string bin){
 /// @param target The index (zero-based) of the target qubit within the system.
 /// @param n The total number of qubits in the system.
 /// @return An n-qubit gate that only affects the specified target qubit.
-cx_mat GateToNQubitSystem(cx_mat U1, int target, int n){
+cx_mat GateToNQubitSystem(const cx_mat& U1, int target, int n){
+    cx_mat result = U1;
     if (target > 0){
-        U1 = kron(Id(target), U1);
+        result = kron(Id(target), result);
     }
     int diff = n - target - 1;
     if (diff > 0) {
-        U1 = kron(U1,Id(diff));
+        result = kron(result, Id(diff));
     }
-    return U1;
+    return result;
 }
 
 /// @brief Applies a Gate U to the density matrix rho
 /// @param rho 
 /// @param U 
 /// @return The modified density matrix
-cx_mat ApplyGateToDensityMatrix(cx_mat rho, cx_mat U){
+cx_mat ApplyGateToDensityMatrix(const cx_mat& rho, const cx_mat& U){
     return (U * rho) * (conj(U).t());
 }
 
-bool IsPure(cx_mat rho, double delta) {
+bool IsPure(const cx_mat& rho, double delta) {
     cx_double t = trace(rho*rho);
     return t.real() - 1 < delta;
 }
-
 
 cx_mat UGateToGate(u_gate gate) {
     switch (gate) {
@@ -83,12 +83,12 @@ cx_mat UGateToGate(u_gate gate) {
     }
 }
 
-cx_mat ApplyGate(cx_mat rho, u_gate gate, int qubit) {
+cx_mat ApplyGate(const cx_mat& rho, u_gate gate, int qubit) {
     int qubit_count = ceil(log2(rho.n_rows));
-    return ApplyGateToDensityMatrix(rho, GateToNQubitSystem(UGateToGate(gate),qubit,qubit_count));
+    return ApplyGateToDensityMatrix(rho, GateToNQubitSystem(UGateToGate(gate), qubit, qubit_count));
 }
 
-cx_mat ApplyCGate(cx_mat rho, u_gate gate, int control, int target) {
+cx_mat ApplyCGate(const cx_mat& rho, u_gate gate, int control, int target) {
     int qubit_count = ceil(log2(rho.n_rows));
     cx_mat U = CG(UGateToGate(gate), control, target);
     int min_qb = min(control, target);
@@ -100,7 +100,7 @@ cx_mat ApplyCGate(cx_mat rho, u_gate gate, int control, int target) {
     return ApplyGateToDensityMatrix(rho, U);
 }
 
-int rearrangeBits(int i, vector<int> a) {
+int rearrangeBits(int i, const vector<int>& a) {
     int ret = 0;
     for (size_t j = 0; j < a.size(); j++){
         if (a[j] >= 0) {
@@ -114,7 +114,7 @@ int rearrangeBits(int i, vector<int> a) {
 /// @param rho Density matrix to take a partial trace from.
 /// @param targets A vector containing the qubits to trace.
 /// @return A denisty matrix of the traced qubits.
-cx_mat PartialTrace(cx_mat rho, vector<int> targets) {
+cx_mat PartialTrace(const cx_mat& rho, const vector<int>& targets) {
     if (rho.n_rows != rho.n_cols) {
         throw invalid_argument("Matrix provided should be square not " + to_string(rho.n_rows) + " by " + to_string(rho.n_cols));
     }
@@ -173,9 +173,9 @@ cx_mat PartialTrace(cx_mat rho, vector<int> targets) {
 /// @param target
 /// @param state
 /// @return
-cx_mat BasisProjection(const cx_mat rho, int target, int state) {
+cx_mat BasisProjection(const cx_mat& rho, int target, int state) {
     auto U = state ? B1() : B0();
-    cx_mat rho_projected = ApplyGateToDensityMatrix(rho, GateToNQubitSystem(U,target,ceil(log2(rho.n_rows))));
+    cx_mat rho_projected = ApplyGateToDensityMatrix(rho, GateToNQubitSystem(U, target, ceil(log2(rho.n_rows))));
     
     // Normalize by trace
     cx_double trace_val = trace(rho_projected);
@@ -184,7 +184,7 @@ cx_mat BasisProjection(const cx_mat rho, int target, int state) {
     return rho_projected;
 }
 
-cx_mat BasisProjections(const cx_mat rho, vector<int> targets, int state) {
+cx_mat BasisProjections(const cx_mat& rho, const vector<int>& targets, int state) {
     int j = 0;
     int qc = ceil(log2(rho.n_rows));
     cx_mat U = Id();
@@ -212,13 +212,12 @@ cx_mat BasisProjections(const cx_mat rho, vector<int> targets, int state) {
     return rho_projected;
 }
 
-
 /// @brief Samples a set of target qubits from a larger density matrix
 /// @param rho Density matrix to sample from.
 /// @param targets Qubits to sample
 /// @param random Random value for sampling
 /// @return A int representing the collapsed state of the trageted qubits
-int PartialSample(const cx_mat rho, vector<int> targets, double random) {
+int PartialSample(const cx_mat& rho, const vector<int>& targets, double random) {
     return Sample(PartialTrace(rho, targets), random);
 }
 
@@ -227,14 +226,14 @@ int PartialSample(const cx_mat rho, vector<int> targets, double random) {
 /// @param target Qubit to sample
 /// @param random Random value for sampling
 /// @return A int representing the collapsed state of the trageted qubits
-int PartialSample(const cx_mat rho, int target, double random) {
+int PartialSample(const cx_mat& rho, int target, double random) {
     return Sample(PartialTrace(rho, {target}), random);
 }
 
 /// @brief Gets a sample from the density matrix for each random value provided.
 /// @param rho Density matrix to sample from.
 /// @return A vector of samples from the density matrix.
-int Sample(const cx_mat rho, double random) {
+int Sample(const cx_mat& rho, double random) {
     // Validate input
     if (rho.n_rows != rho.n_cols) {
         throw invalid_argument("Density matrix must be square");
@@ -272,16 +271,16 @@ int Sample(const cx_mat rho, double random) {
 /// @param T2 Phase choherence time
 /// @param t time channel acts upon qubits
 /// @return 
-cx_mat ApplyAmplitudeDampeningAndDephasing(cx_mat rho, double* T1, double* T2, double t) {
+cx_mat ApplyAmplitudeDampeningAndDephasing(const cx_mat& rho, double* T1, double* T2, double t) {
     cx_mat temp_state = rho;
     double n = ceil(log2(rho.n_rows));
     for(int i = 0; i < n; i++){
         double px = (1 - exp(-t/T1[i]))*0.25;
         double py = px;
         double pz = 0.5 - px - (exp(-t/T2[i])*0.5);
-        cx_mat XN = GateToNQubitSystem(X(),i,n);
-        cx_mat YN = GateToNQubitSystem(Y(),i,n);
-        cx_mat ZN = GateToNQubitSystem(Z(),i,n);
+        cx_mat XN = GateToNQubitSystem(X(), i, n);
+        cx_mat YN = GateToNQubitSystem(Y(), i, n);
+        cx_mat ZN = GateToNQubitSystem(Z(), i, n);
         temp_state = ((1 - px - py - pz) * temp_state) + (px * XN * temp_state * XN)  + (py * YN * temp_state * YN) + (pz * ZN * temp_state * ZN);
     }
     return temp_state;

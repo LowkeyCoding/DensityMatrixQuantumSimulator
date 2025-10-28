@@ -80,6 +80,7 @@ cx_mat CX() {
     };
     return gate;
 }
+
 /// @brief RX gate (Rotates the bloch sphere theta degrees around the X axis)
 /// @param theta Angle in degrees
 /// @return RX gate with a rotation theta
@@ -92,7 +93,6 @@ cx_mat RX(double theta){
     };
     return rx_theta;
 }
-
 
 /// @brief RY gate (Rotates the bloch sphere theta degrees around the Y axis)
 /// @param theta Angle in degrees
@@ -123,7 +123,7 @@ cx_mat RZ(double theta){
 /// @param control The qubit that controls whether the gate should be applied.
 /// @param target
 /// @return Controlled gate
-cx_mat CG(cx_mat gate, int control, int target) {
+cx_mat CG(const cx_mat& gate, int control, int target) {
     if(control == target) {
         throw invalid_argument("Control and target qubit must be different");
     }
@@ -164,7 +164,7 @@ cx_mat SWAP(int q1, int q2) {
 /// @brief Hermitian adjoint (dagger)
 /// @param M The input matrix 
 /// @return M^†
-cx_mat adjoint(const cx_mat M) { 
+cx_mat adjoint(const cx_mat& M) { 
     return conj(M).st(); 
 }
 
@@ -173,6 +173,6 @@ cx_mat adjoint(const cx_mat M) {
 /// @param rho2 Second density matrix
 /// @param delta Maximum difference allowed for equality 
 /// @return Whether the two density matrixes are equal
-bool mat_eq(cx_mat rho1, cx_mat rho2, double delta) {
+bool mat_eq(const cx_mat& rho1, const cx_mat& rho2, double delta) {
     return approx_equal(rho1,rho2,"absdiff", delta);
 }
