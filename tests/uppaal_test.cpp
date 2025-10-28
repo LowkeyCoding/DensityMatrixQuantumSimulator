@@ -229,10 +229,7 @@ TEST_CASE("Basis Projections") {
 TEST_CASE("Partial Sample") {
     double rho[512] = {0};  // 4 qubits
     int qc = 4;
-    UInitBinState(rho, qc, "1010");
-    UApplyGate(rho, qc, GH, 0); // |+010>
-    UApplyGate(rho, qc, GH, 1); // |+-10>
-
+    UInitBinState(rho, qc, "+-10");
     SUBCASE("One Target") {
         int targets[1] = {0};
         SUBCASE("0") {

@@ -136,8 +136,9 @@ cx_mat PartialTrace(const cx_mat& rho, const vector<int>& targets) {
         kept_qubits.push_back(i);
     }
     // Remove target qubits from kept_qubits
-    sort(targets.begin(), targets.end(), greater<int>());
-    for (int t : targets) {
+    vector<int> sorted = targets;
+    sort(sorted.begin(), sorted.end(), greater<int>());
+    for (int t : sorted) {
         kept_qubits.erase(kept_qubits.begin() + t);
     }
     
