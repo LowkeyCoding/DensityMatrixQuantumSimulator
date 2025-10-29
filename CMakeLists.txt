@@ -7,7 +7,7 @@ set(DMQS_EX TRUE)
 
 # Global compile options
 set(CMAKE_CXX_STANDARD 23)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wpedantic -Wall -Wextra -O3")  # use -L/opt/cuda/lib64 -lnvblas for gpu support 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wpedantic -Wall -Wextra -O3 ")  # use -L/opt/cuda/lib64 -lnvblas for gpu support 
 
 include(cmake/sanitizers.cmake)
 include(cmake/armadillo.cmake)
@@ -17,11 +17,16 @@ include_directories(include)
 # Add subdirectories
 add_subdirectory(src)
 add_subdirectory(bindings)
-if(DMQS_EX)
-    add_executable(densecoding examples/densecoding.cpp)
-    target_link_libraries(densecoding dmqs_uppaal)
-endif()
 
 include(cmake/doctest.cmake)
 enable_testing()
 add_subdirectory(tests)
+
+
+if(DMQS_EX)
+    add_executable(densecoding examples/densecoding.cpp)
+    target_link_libraries(densecoding dmqs_uppaal)
+    add_executable(densecoding_cuda examples/densecoding.cpp)
+    target_link_libraries(densecoding_cuda dmqs_uppaal)
+    target_compile_options(densecoding_cuda PRIVATE "-L/opt/cuda/lib64 -lnvblas")
+endif()

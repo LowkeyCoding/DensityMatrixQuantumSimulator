@@ -1,13 +1,14 @@
 #include <uppaal/uppaal.h>
 #include <stdio.h>
 #include <stdlib.h>
+
 int main() {
-    const int qc = 5;
-    double test [2048] = {0};
+    const int qc = 14;
+    double* test = (double*)calloc(536870912, sizeof(double));
     double T1[qc] = {20};
     double T2[qc] = {18};
-    for(int i = 0; i < 10000; i++) {
-        UInitBinState(test, qc, "00000");
+    for(int i = 0; i < 1; i++) {
+        UInitBinState(test, qc, "10001001010110");
         UApplyGate(test, qc, GH, 0);
         UAmplitudeDampeningAndDephasing(test, qc, T1, T2, 1);
         UApplyCGate(test, qc, GX, 0, 1);
