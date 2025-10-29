@@ -148,7 +148,7 @@ cx_mat PartialTrace(const cx_mat& rho, const vector<int>& targets) {
         kept_bits.push_back(bit_positions[k]);
     }
     vector<int> target_bits;
-    for (int t : targets) {
+    for (int t : sorted) {
         target_bits.push_back(bit_positions[t]);
     }
     
