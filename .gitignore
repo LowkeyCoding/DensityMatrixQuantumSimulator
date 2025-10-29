@@ -1,5 +1,7 @@
 ### PERF ###
 perf.*
+### HEAPTRACK ###
+*.zst
 
 ### C++ ###
 # Prerequisites
