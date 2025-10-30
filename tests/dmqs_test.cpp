@@ -4,7 +4,32 @@
 #define EXACT 0.0
 #define DEC14 1e-14
 
-TEST_CASE("Test generating state from binary string") {
+
+TEST_CASE("Generating 1 qubit state from basis string") {
+    auto q0 = BinaryStringToDensityMatrix("0");
+    auto q1 = BinaryStringToDensityMatrix("1");
+    auto qp = BinaryStringToDensityMatrix("+");
+    auto qm = BinaryStringToDensityMatrix("-");
+    cx_double d0 = cx_double(0,0);
+    cx_double d1 = cx_double(1,0);
+    cx_double dhp = cx_double(0.5,0.0);
+    cx_double dhm = cx_double(-0.5,-0.0);
+    cx_mat::fixed<2,2> c0 = {d1,d0,d0,d0};
+    cx_mat::fixed<2,2> c1 = {d0,d0,d0,d1};
+    cx_mat::fixed<2,2> cp = {dhp,dhp,dhp,dhp};
+    cx_mat::fixed<2,2> cm = {dhp,dhm,dhm,dhp};
+    INFO("q0: \n", q0);
+    INFO("q1: \n", q1);
+    INFO("qp: \n", qp, "\ncp: \n", cp);
+    INFO("qm: \n", qm, "\ncm: \n", cm);
+    CHECK(mat_eq(q0, c0, EXACT));
+    CHECK(mat_eq(q1, c1, EXACT));
+    // As close to exact as double allows for.
+    CHECK(mat_eq(qp, cp, 1e-15));
+    CHECK(mat_eq(qm, cm, 1e-15));
+}
+
+TEST_CASE("Generating 2 qubit state from binary string") {
     cx_mat m00 = BinaryStringToDensityMatrix("00");
     cx_mat m01 = BinaryStringToDensityMatrix("01");
     cx_mat m10 = BinaryStringToDensityMatrix("10");

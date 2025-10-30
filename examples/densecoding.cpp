@@ -3,12 +3,12 @@
 #include <stdlib.h>
 
 int main() {
-    const int qc = 14;
-    double* test = (double*)calloc(536870912, sizeof(double));
+    const int qc = 8;
+    double* test = (double*)calloc(131072, sizeof(double));
     double T1[qc] = {20};
     double T2[qc] = {18};
     for(int i = 0; i < 1; i++) {
-        UInitBinState(test, qc, "10001001010110");
+        UInitBinState(test, qc, "10010010");
         UApplyGate(test, qc, GH, 0);
         UAmplitudeDampeningAndDephasing(test, qc, T1, T2, 1);
         UApplyCGate(test, qc, GX, 0, 1);
