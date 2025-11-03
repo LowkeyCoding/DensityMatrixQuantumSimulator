@@ -1,8 +1,9 @@
 #pragma once
 #include <armadillo>
 #include <cassert>
-using namespace arma;
-using namespace std;
+using std::invalid_argument, std::to_string;
+
+using arma::cx_mat, arma::cx_double, arma::fill::eye;
 
 enum u_gate {
   GID,
@@ -31,3 +32,4 @@ cx_mat SWAP(int q1, int q2);
 
 bool mat_eq(const cx_mat& rho1, const cx_mat& rho2, double delta);
 cx_mat adjoint(const cx_mat& M);
+int slog2(int n);

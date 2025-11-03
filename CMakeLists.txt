@@ -8,6 +8,7 @@ set(DMQS_EX TRUE)
 # Global compile options
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wpedantic -Wall -Wextra -O3")  # use -L/opt/cuda/lib64 -lnvblas for gpu support 
+set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 
 include(cmake/sanitizers.cmake)
 include(cmake/armadillo.cmake)
