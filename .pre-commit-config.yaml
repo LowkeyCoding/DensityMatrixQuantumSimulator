@@ -1,0 +1,14 @@
+fail_fast: false
+repos:
+  - repo: https://github.com/pocc/pre-commit-hooks
+    rev: master
+    hooks:
+      - id: cpplint
+        args: ["--filter=-legal/copyright,-whitespace/comments"]
+      - id: cppcheck
+        args: [
+          --enable=all,--check-level=exhaustive, --suppress=missingInclude,
+          --suppress=missingIncludeSystem, --suppress=unmatchedSuppression,
+          --suppress=checkersReport, --suppress=unusedFunction,
+          --suppress=useStlAlgorithm
+        ]
