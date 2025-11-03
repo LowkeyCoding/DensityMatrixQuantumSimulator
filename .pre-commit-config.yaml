@@ -1,7 +1,7 @@
 fail_fast: false
 repos:
   - repo: https://github.com/pocc/pre-commit-hooks
-    rev: master
+    rev: v1.3.5
     hooks:
       - id: cpplint
         args: ["--filter=-legal/copyright,-whitespace/comments"]
@@ -12,3 +12,11 @@ repos:
           --suppress=checkersReport, --suppress=unusedFunction,
           --suppress=useStlAlgorithm
         ]
+  - repo: local
+    hooks:
+      - id: utest
+        name: Build and run unit tests
+        entry: sh ./build-and-test.sh
+        language: system
+        always_run: true
+        pass_filenames: false
