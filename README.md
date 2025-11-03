@@ -52,3 +52,26 @@ import "build-release/bindings/libdmqs_uppaal.so" {
     void UAmplitudeDampeningAndDephasing(double& rho[32], int rho_size, double& T1[2], double& T2[2], double t);
 };
 ```
+
+## Develop
+
+When the required tools are downloaded run pre-commit installation command to ensure that pre-commit hooks run before commiting. 
+```
+pre-commit install
+```
+
+### Required tools
+For development it is required to install `pre-commit`.
+
+#### Arch based
+```
+pacman -S pre-commit
+```
+
+#### Via Python
+```
+pip install pre-commit
+```
+
+
+
