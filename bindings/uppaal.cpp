@@ -1,8 +1,9 @@
 #include <uppaal/uppaal.h>
 #include <vector>
 
-// Takes a binary string and overwrites rho with a density matrix encoding that
-// state. Supported basis states are |0⟩ and |1⟩.
+// Initialize density matrix with binary state string
+// (e.g., "01" for |01⟩ or "+-" for |+-⟩)
+// rho_size = 1 << 2*N+1, bin = binary state string of length N
 extern "C" void UInitBinState(double* rho, int rho_size, const char* state) {
     assert(size_t(rho_size) == strlen(state));
     size_t mat_row = 1 << rho_size;
@@ -11,7 +12,7 @@ extern "C" void UInitBinState(double* rho, int rho_size, const char* state) {
     memmove(rho, res.memptr(), mat_size * sizeof(double));
 }
 
-// Applies a gate to rho.
+// Apply single-qubit gate to target qubit
 extern "C" void UApplyGate(double* rho, int rho_size, int gate, int target) {
     size_t mat_row = 1 << rho_size;
     size_t mat_size = mat_row * mat_row * 2;
@@ -21,7 +22,7 @@ extern "C" void UApplyGate(double* rho, int rho_size, int gate, int target) {
     memcpy(rho, res.memptr(), mat_size * sizeof(double));
 }
 
-// Applies a controlled gate to rho.
+// Apply controlled gate (control -> target)
 extern "C" void UApplyCGate(double* rho, int rho_size, int gate, int control,
                             int target) {
     size_t mat_row = 1 << rho_size;
@@ -32,7 +33,7 @@ extern "C" void UApplyCGate(double* rho, int rho_size, int gate, int control,
     memcpy(rho, res.memptr(), mat_size * sizeof(double));
 }
 
-// Applies a unitary U to rho given that u_size == rho_size.
+// Apply custom unitary matrix U (u_size must equal rho_size)
 extern "C" void UApplyUnitary(double* rho, int rho_size, double* U,
                               int u_size) {
     if (rho_size != u_size) {
@@ -50,8 +51,8 @@ extern "C" void UApplyUnitary(double* rho, int rho_size, double* U,
     memcpy(rho, res.memptr(), mat_size * sizeof(double));
 }
 
-// Generates a new density matrix prho from rho containing the state of the
-// target qubits.
+// Partial trace: extract subsystem state into prho
+// prho_size = 1 << N*2-1 where N = len(targets)
 extern "C" void UPartialTrace(double* rho, int rho_size, double* prho,
                               int prho_size, int* targets, int targets_size) {
     if (prho_size != targets_size) {
@@ -69,7 +70,7 @@ extern "C" void UPartialTrace(double* rho, int rho_size, double* prho,
     memcpy(prho, res.memptr(), mat_size * sizeof(double));
 }
 
-// Projects a basis state on to the target qubit in rho.
+// Project target qubit onto basis state (|0⟩ or |1⟩)
 extern "C" void UBasisProjection(double* rho, int rho_size, int target,
                                  int state) {
     size_t mat_row = 1 << rho_size;
@@ -80,7 +81,7 @@ extern "C" void UBasisProjection(double* rho, int rho_size, int target,
     memcpy(rho, res.memptr(), mat_size * sizeof(double));
 }
 
-// Projects basis state on the target qubits in rho.
+// Project multiple target qubits onto basis state (bitmask)
 extern "C" void UBasisProjections(double* rho, int rho_size, int* targets,
                                   int targets_size, int state) {
     size_t mat_row = 1 << rho_size;
@@ -92,9 +93,8 @@ extern "C" void UBasisProjections(double* rho, int rho_size, int* targets,
     memcpy(rho, res.memptr(), mat_size * sizeof(double));
 }
 
-// Returns an int containing the result of the measurement of the target qubits
-// in the density matrix rho. If it is needed to project the result on to rho
-// use UBasisProjections.
+// Measure target qubits and return result (does not collapse state)
+// Use UBasisProjections to collapse after measurement
 extern "C" int UPartialMeasure(double* rho, int rho_size, int* targets,
                                int targets_size, double r) {
     size_t mat_row = 1 << rho_size;
@@ -104,9 +104,7 @@ extern "C" int UPartialMeasure(double* rho, int rho_size, int* targets,
     return PartialSample(in_mat, t, r);
 }
 
-// Returns an int containing the result of the measurement of all the qubits in
-// the density matrix rho. If it is needed to project the result on to rho use
-// UBasisProjections with all qubits as targets.
+// Measure all qubits and return result (does not collapse state)
 extern "C" int UMeasureAll(double* rho, int rho_size, double r) {
     size_t mat_row = 1 << rho_size;
     cx_mat in_mat = cx_mat(reinterpret_cast<cx_double*>(rho),
@@ -114,7 +112,7 @@ extern "C" int UMeasureAll(double* rho, int rho_size, double r) {
     return Sample(in_mat, r);
 }
 
-// Applies amplitude dampening and dephasing channel on rho as seen
+// Apply amplitude damping and dephasing noise channel on rho as seen
 // in: 10.1098/rspa.2008.0439
 extern "C" void UAmplitudeDampeningAndDephasing(double* rho, int rho_size,
                                                 const double* T1,
