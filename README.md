@@ -88,17 +88,30 @@ import "build-release/bindings/libdmqs_uppaal.so" {
 
 ## Develop
 
+The development requires pre-commit hooks to pass before committing.
+
+### Dependencies
+
+Before trying to extend the library, install the following development dependencies for your system.
+
+#### Ubuntu/Debian
+```
+sudo apt install pre-commit cppcheck cpplint
+```
+
+##### Arch based
+```
+sudo pacman -S pre-commit cppcheck cpplint
+```
+
+#### MacOS
+```
+brew install pre-commit cppcheck cpplint
+```
+
+### Setup Pre-commit
 When the required tools are downloaded run pre-commit installation command to ensure that pre-commit hooks run before commiting. 
+
 ```
 pre-commit install
-```
-
-#### Arch based
-```
-pacman -S pre-commit
-```
-
-#### Via Python
-```
-pip install pre-commit
 ```
