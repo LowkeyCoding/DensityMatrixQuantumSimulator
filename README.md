@@ -1,5 +1,7 @@
 # DensitryMatrixQuantumSimulator
 
+A high-performance C++ library for quantum system simulation using density matrix formalism, featuring noise modeling and UPPAAL integration for formal verification of quantum protocols.
+
 ## Dependencies
 
 Before building, install the following dependencies for your systen.
