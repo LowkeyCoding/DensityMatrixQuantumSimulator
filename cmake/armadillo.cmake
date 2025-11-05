@@ -1,9 +1,10 @@
 # Ensures that Armadillo (Linear Algebra) library is installed
 include(FetchContent)
 FetchContent_Declare(Armadillo
-        URL https://sourceforge.net/projects/arma/files/armadillo-15.0.3.tar.xz
-        URL_HASH SHA256=9f55ec10f0a91fb6479ab4ed2b37a52445aee917706a238d170b5220c022fe43
+        URL https://sourceforge.net/projects/arma/files/armadillo-15.2.1.tar.xz
+        URL_HASH SHA256=a5b8109da3c169802f51a14d3bd1246395c24bbca55601760b0c96a3c0b2f8fa
         DOWNLOAD_NO_PROGRESS ON
+        DOWNLOAD_EXTRACT_TIMESTAMP ON
         EXCLUDE_FROM_ALL ON
         FIND_PACKAGE_ARGS 15)
 set(STATIC_LIB ON CACHE BOOL "Build static Armadillo library")
