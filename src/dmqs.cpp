@@ -63,12 +63,18 @@ cx_mat GateToNQubitSystem(const cx_mat& U1, int target, int n) {
 /// @param U
 /// @return The modified density matrix
 cx_mat ApplyGateToDensityMatrix(const cx_mat& rho, const cx_mat& U) {
-    return (U * rho) * (conj(U).t());
+    return (U * rho) * adjoint(U);
 }
 
+/// @brief Checks if a density matrix represents a pure state using purity
+/// @param rho Density matrix to check
+/// @param delta Numerical tolerance for floating point comparisons
+/// @return true if the state is pure, false if mixed
 bool IsPure(const cx_mat& rho, double delta) {
-    cx_double t = trace(rho*rho);
-    return t.real() - 1 < delta;
+    // For a pure state: trace(rho²) = 1
+    // This is more efficient than checking rho² = rho
+    cx_double purity = trace(rho * rho);
+    return abs(purity - cx_double(1, 0)) < delta;
 }
 
 cx_mat UGateToGate(u_gate gate) {
@@ -131,6 +137,10 @@ cx_mat PartialTrace(const cx_mat& rho, const vector<int>& targets) {
         throw invalid_argument(
             "Matrix provided should be square not " + to_string(rho.n_rows) +
             " by " + to_string(rho.n_cols));
+    }
+
+    if (targets.empty()) {
+        throw invalid_argument("There should be atleast 1 target");
     }
 
     auto minmax = minmax_element(targets.begin(), targets.end());

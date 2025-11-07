@@ -361,6 +361,84 @@ TEST_CASE("Partial Trace 3 qubit") {
     CHECK(cmp(rt, cm2, 8, EXACT));
 }
 
+TEST_CASE("Amplitude Dampening and Dephasing") {
+    SUBCASE("Single Qubit - Pure State") {
+        double rho[8] = {0};
+        UInitBinState(rho, 1, "1"); // |1⟩ state
+
+        double T1[] = {10.0}; // Short relaxation time
+        double T2[] = {5.0};  // Short dephasing time
+        double t = 1.0;       // Time duration
+
+        UAmplitudeDampeningAndDephasing(rho, 1, T1, T2, t);
+
+        // After dampening, |1⟩ should partially decay to |0⟩
+        // Trace should still be 1
+        double trace = rho[0] + rho[6]; // Real parts of diagonal
+        CHECK(abs(trace - 1.0) < DEC14);
+    }
+
+    SUBCASE("Two Qubits - Different T1/T2") {
+        double rho[32] = {0};
+        UInitBinState(rho, 2, "11"); // |11⟩ state
+
+        double T1[] = {10.0, 20.0}; // Different T1 for each qubit
+        double T2[] = {5.0, 15.0};  // Different T2 for each qubit
+        double t = 0.5;
+
+        UAmplitudeDampeningAndDephasing(rho, 2, T1, T2, t);
+
+        // System should still be valid density matrix
+        // Trace should be preserved
+        double trace = rho[0] + rho[10] + rho[20] + rho[30];
+        CHECK(abs(trace - 1.0) < DEC14);
+    }
+
+    SUBCASE("No Time Evolution") {
+        double rho[32] = {0};
+        double rho_original[32] = {0};
+        UInitBinState(rho, 2, "01");
+        UInitBinState(rho_original, 2, "01");
+
+        double T1[] = {1000.0, 1000.0}; // Very long T1
+        double T2[] = {1000.0, 1000.0}; // Very long T2
+        double t = 0.001; // Very short time
+
+        UAmplitudeDampeningAndDephasing(rho, 2, T1, T2, t);
+
+        // State should be almost unchanged
+        bool unchanged = true;
+        for (int i = 0; i < 32; i++) {
+            if (abs(rho[i] - rho_original[i]) > 0.01) {
+                unchanged = false;
+                break;
+            }
+        }
+        CHECK(unchanged);
+    }
+}
+
+TEST_CASE("Memory Management and Buffer Sizes") {
+    SUBCASE("Buffer Size Validation") {
+        // Test that functions handle buffer sizes correctly
+        double small_buffer[4] = {0}; // Too small for 2 qubits
+        CHECK_THROWS(UInitBinState(small_buffer, 2, "00"));
+    }
+
+    SUBCASE("Memory Overlap Protection") {
+        double rho[32] = {0};
+        UInitBinState(rho, 2, "00");
+
+        // Apply gate should work without memory corruption
+        UApplyGate(rho, 2, GX, 0);
+        UApplyGate(rho, 2, GX, 1);
+
+        // Final state should be valid
+        double trace = rho[0] + rho[10] + rho[20] + rho[30];
+        CHECK(abs(trace - 1.0) < 1e-14);
+    }
+}
+
 TEST_CASE("Quantum Teleportation") {
     int qc = 3;
     double rho[128] = {0};

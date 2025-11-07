@@ -142,3 +142,41 @@ TEST_CASE("Unitary") {
         }
     }
 }
+
+TEST_CASE("SWAP Gate Properties") {
+    SUBCASE("SWAP is Self-Inverse") {
+        for (int q1 = 0; q1 < 3; q1++) {
+            for (int q2 = 0; q2 < 3; q2++) {
+                if (q1 != q2) {
+                    cx_mat swap_gate = SWAP(q1, q2);
+                    cx_mat swapped_back = SWAP(q1, q2) * swap_gate;
+                    int n = slog2(swapped_back.n_rows);
+                    CHECK(mat_eq(swapped_back, Id(n), DEC14));
+                }
+            }
+        }
+    }
+}
+
+TEST_CASE("slog2 Function") {
+    SUBCASE("Power of Two Values") {
+        CHECK_EQ(slog2(1), 0);
+        CHECK_EQ(slog2(2), 1);
+        CHECK_EQ(slog2(4), 2);
+        CHECK_EQ(slog2(8), 3);
+        CHECK_EQ(slog2(16), 4);
+        CHECK_EQ(slog2(32), 5);
+    }
+
+    SUBCASE("Non Power of Two Values") {
+        // 3 >> 1 = 1, then 1 >> 1 = 0 -> count=1
+        CHECK_EQ(slog2(3), 1);
+        // 5 >> 1 = 2, then 2 >> 1 = 1, then 1 >> 1 = 0 -> count=2
+        CHECK_EQ(slog2(5), 2);
+         // 7 >> 1 = 3, then 3 >> 1 = 1, then 1 >> 1 = 0 -> count=2
+        CHECK_EQ(slog2(7), 2);
+        // 15 >> 1 = 7, then 7 >> 1 = 3, then 3 >> 1 = 1,
+        // then 1 >> 1 = 0 -> count=3
+        CHECK_EQ(slog2(15), 3);
+    }
+}
