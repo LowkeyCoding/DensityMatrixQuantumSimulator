@@ -27,4 +27,7 @@ add_subdirectory(tests)
 if(DMQS_EX)
     add_executable(densecoding examples/densecoding.cpp)
     target_link_libraries(densecoding dmqs_uppaal)
+
+    add_executable(floating examples/floating.cpp)
+    target_link_libraries(floating dmqs_core)
 endif()

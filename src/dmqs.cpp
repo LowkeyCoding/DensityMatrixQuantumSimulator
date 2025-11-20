@@ -308,8 +308,8 @@ int Sample(const cx_mat& rho, double random) {
 /// @brief Applies amplitude dampening and dephasing channel as seen in:
 ///        10.1098/rspa.2008.0439
 /// @param rho Density matrix to apply
-/// @param T1 Energy relaxation time
-/// @param T2 Phase choherence time
+/// @param T1 Array of Energy relaxation times (1 per qubit)
+/// @param T2 Array of Phase choherence times (1 per qubit)
 /// @param t time channel acts upon qubits
 /// @return returns a new density matrix with noise applied
 cx_mat ApplyAmplitudeDampeningAndDephasing(const cx_mat& rho, const double* T1,
