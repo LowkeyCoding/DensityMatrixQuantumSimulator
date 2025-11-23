@@ -30,4 +30,7 @@ if(DMQS_EX)
 
     add_executable(floating examples/floating.cpp)
     target_link_libraries(floating dmqs_core)
+
+    add_executable(jiri examples/jiri.cpp)
+    target_link_libraries(jiri dmqs_core)
 endif()
