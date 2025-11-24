@@ -124,3 +124,45 @@ extern "C" void UAmplitudeDampeningAndDephasing(double* rho, int rho_size,
     cx_mat res = ApplyAmplitudeDampeningAndDephasing(in_mat, T1, T2, t);
     memcpy(rho, res.memptr(), mat_size * sizeof(double));
 }
+
+extern "C" void UApplyChannel(double* rho, int rho_size, int channel,
+                              double* probs, int probs_size) {
+    auto chan = static_cast<u_channel>(channel);
+    vector<cx_mat> ops;
+    cx_mat res;
+    std::function<vector<cx_mat>(double)> chan_f = nullptr;
+    size_t mat_row = 1 << rho_size;
+    size_t mat_size = mat_row * mat_row * 2;
+    cx_mat in_mat = cx_mat(reinterpret_cast<cx_double*>(rho),
+                           mat_row, mat_row, false, true);
+    switch (chan) {
+        case AMPLITUDE_DAMPING:
+            chan_f = amplitude_damping_ops;
+            break;
+        case PHASE_DAMPING:
+            chan_f = phase_damping_ops;
+            break;
+        case DEPOLARIZING:
+            chan_f = depolarizing_ops;
+            break;
+        case PHASE_FLIP:
+            chan_f = phase_flip_ops;
+            break;
+        case BIT_PHASE_FLIP:
+            chan_f = bit_phase_flip_ops;
+            break;
+        default:
+            throw invalid_argument("Unknown channel type");
+    }
+    if (probs_size > 1) {
+        for (int i = 0; i < probs_size; i++) {
+            auto ops_for_qubit = chan_f(probs[i]);
+            ops.insert(ops.end(), ops_for_qubit.begin(), ops_for_qubit.end());
+        }
+        res = apply_channel(in_mat, ops);
+    } else {
+        ops = chan_f(probs[0]);
+        res = apply_channel(in_mat, ops);
+    }
+    memcpy(rho, res.memptr(), mat_size * sizeof(double));
+}
