@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <dmqs/dmqs.hpp>
+#include <dmqs/channels.hpp>
 #ifndef INCLUDE_UPPAAL_UPPAAL_H_
 #define INCLUDE_UPPAAL_UPPAAL_H_
 
@@ -20,5 +21,6 @@ extern "C" int UPartialMeasure(double* rho, int rho_size, int* targets,
 extern "C" void UAmplitudeDampeningAndDephasing(double* rho, int rho_size,
                                                 const double* T1,
                                                 const double* T2, double t);
-
+extern "C" void UApplyChannel(double* rho, int rho_size, int channel,
+                              double* probs, int probs_size);
 #endif // INCLUDE_UPPAAL_UPPAAL_H_

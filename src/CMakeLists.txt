@@ -1,6 +1,7 @@
 # Add source files
 add_library(dmqs_core SHARED
     dmqs.cpp
+    channels.cpp
     gates/gates.cpp
 )
 

@@ -30,4 +30,7 @@ if(DMQS_EX)
 
     add_executable(floating examples/floating.cpp)
     target_link_libraries(floating dmqs_core)
+
+    add_executable(new_noise examples/new_noise.cpp)
+    target_link_libraries(new_noise dmqs_uppaal)
 endif()
