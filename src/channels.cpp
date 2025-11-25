@@ -22,7 +22,7 @@ vector<cx_mat> phase_damping_ops(double p) {
     auto E1 = cx_mat::fixed<2, 2>(zeros);
     E1(0, 0) = sqrt(1-p);
     auto E2 = cx_mat::fixed<2, 2>(zeros);
-    E1(1, 1) = sqrt(1-p);
+    E2(1, 1) = sqrt(1-p);
     ops.push_back(E0);
     ops.push_back(E1);
     ops.push_back(E2);
