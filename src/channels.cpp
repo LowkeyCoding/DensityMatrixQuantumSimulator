@@ -5,9 +5,9 @@ vector<cx_mat> amplitude_damping_ops(double p) {
     vector<cx_mat> ops;
     auto E0 = cx_mat::fixed<2, 2>(zeros);
     E0(0, 0) = 1;
-    E0(1, 1) = sqrt(1 - p);
+    E0(1, 1) = sqrt(p);
     auto E1 = cx_mat::fixed<2, 2>(zeros);
-    E1(0, 1) = sqrt(p);
+    E1(0, 1) = sqrt(1 - p);
     ops.push_back(E0);
     ops.push_back(E1);
     return ops;
@@ -25,7 +25,7 @@ vector<cx_mat> phase_damping_ops(double p) {
     E1(1, 1) = sqrt(1-p);
     ops.push_back(E0);
     ops.push_back(E1);
-    ops.push_back(E1);
+    ops.push_back(E2);
     return ops;
 }
 
