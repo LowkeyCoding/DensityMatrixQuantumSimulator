@@ -125,6 +125,10 @@ extern "C" void UAmplitudeDampeningAndDephasing(double* rho, int rho_size,
     memcpy(rho, res.memptr(), mat_size * sizeof(double));
 }
 
+// Apply a noise channel to the density matrix.
+// See https://link.springer.com/content/pdf/10.1007/s10773-019-04332-z.pdf
+// and https://docs.pennylane.ai/en/stable/_modules/pennylane/ops/channel.html
+// for details on the implementation of channels.
 extern "C" void UApplyChannel(double* rho, int rho_size, int channel,
                               double* probs, int probs_size) {
     auto chan = static_cast<u_channel>(channel);
@@ -165,4 +169,10 @@ extern "C" void UApplyChannel(double* rho, int rho_size, int channel,
         res = apply_channel(in_mat, ops);
     }
     memcpy(rho, res.memptr(), mat_size * sizeof(double));
+}
+
+// Applies noise with a single probability parameter
+extern "C" void UApplySChannel(double* rho, int rho_size, int channel,
+                              double probs) {
+    UApplyChannel(rho, rho_size, channel, &probs, 1);
 }

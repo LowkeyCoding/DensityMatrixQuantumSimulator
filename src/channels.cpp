@@ -1,13 +1,13 @@
 #include "dmqs/channels.hpp"
 #include <vector>
 // Amplitude damping channel Kraus operators
-vector<cx_mat> amplitude_damping_ops(double gamma) {
+vector<cx_mat> amplitude_damping_ops(double p) {
     vector<cx_mat> ops;
     auto E0 = cx_mat::fixed<2, 2>(zeros);
     E0(0, 0) = 1;
-    E0(1, 1) = sqrt(1 - gamma);
+    E0(1, 1) = sqrt(1 - p);
     auto E1 = cx_mat::fixed<2, 2>(zeros);
-    E1(0, 1) = sqrt(gamma);
+    E1(0, 1) = sqrt(p);
     ops.push_back(E0);
     ops.push_back(E1);
     return ops;
@@ -21,6 +21,33 @@ vector<cx_mat> phase_damping_ops(double p) {
     E0(1, 1) = sqrt(1 - p);
     auto E1 = cx_mat::fixed<2, 2>(zeros);
     E1(1, 1) = sqrt(p);
+    ops.push_back(E0);
+    ops.push_back(E1);
+    return ops;
+}
+
+// Bit flip channel Kraus operators
+vector<cx_mat> bit_flip_ops(double p) {
+    vector<cx_mat> ops;
+    auto E0 = cx_mat::fixed<2, 2>(zeros);
+    E0(0, 1) = 1 * sqrt(1 - p);
+    E0(1, 0) = 1 * sqrt(1 - p);
+    auto E1 = cx_mat::fixed<2, 2>(zeros);
+    E1(0, 0) = sqrt(p);
+    E1(1, 1) = sqrt(p);
+    ops.push_back(E0);
+    ops.push_back(E1);
+    return ops;
+}
+
+vector<cx_mat> phase_flip_ops(double p) {
+    vector<cx_mat> ops;
+    auto E0 = cx_mat::fixed<2, 2>(zeros);
+    E0(0, 0) = sqrt(p);
+    E0(1, 1) = sqrt(p);
+    auto E1 = cx_mat::fixed<2, 2>(zeros);
+    E1(0, 0) = sqrt(1 - p);
+    E1(1, 1) = sqrt(1 - p);
     ops.push_back(E0);
     ops.push_back(E1);
     return ops;
@@ -40,18 +67,6 @@ vector<cx_mat> bit_phase_flip_ops(double p) {
     return ops;
 }
 
-vector<cx_mat> phase_flip_ops(double p) {
-    vector<cx_mat> ops;
-    auto E0 = cx_mat::fixed<2, 2>(zeros);
-    E0(0, 0) = sqrt(p);
-    E0(1, 1) = sqrt(p);
-    auto E1 = cx_mat::fixed<2, 2>(zeros);
-    E1(0, 0) = sqrt(1 - p);
-    E1(1, 1) = sqrt(1 - p);
-    ops.push_back(E0);
-    ops.push_back(E1);
-    return ops;
-}
 
 vector<cx_mat> depolarizing_ops(double p) {
     vector<cx_mat> ops;
@@ -76,6 +91,24 @@ vector<cx_mat> depolarizing_ops(double p) {
     return ops;
 }
 
+std::function<vector<cx_mat>(double)> u_channel_to_ops_f(u_channel channel) {
+    switch (channel) {
+        case AMPLITUDE_DAMPING:
+            return amplitude_damping_ops;
+        case PHASE_DAMPING:
+            return phase_damping_ops;
+        case BIT_FLIP:
+            return bit_flip_ops;
+        case PHASE_FLIP:
+            return phase_flip_ops;
+        case BIT_PHASE_FLIP:
+            return bit_phase_flip_ops;
+        case DEPOLARIZING:
+            return depolarizing_ops;
+        default:
+            throw std::invalid_argument("Unknown channel type");
+    }
+}
 
 cx_mat apply_channel(const cx_mat& rho, const vector<cx_mat>& kraus_ops) {
     int dim = rho.n_rows;

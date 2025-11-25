@@ -47,6 +47,13 @@ const int Y  = 2;  // Pauli Y
 const int Z  = 3;  // Pauli Z
 const int H  = 4;  // Hadamard
 
+const int AMPLITUDE_DAMPING = 0;
+const int PHASE_DAMPING = 1;
+const int BIT_FLIP = 2;
+const int PHASE_FLIP = 3;
+const int BIT_PHASE_FLIP = 4;
+const int DEPOLARIZING = 5;
+
 import "build-release/bindings/libdmqs_uppaal.so" {
     // Initialize density matrix with binary state string (e.g., "01" for |01⟩ or "+-" for |+-⟩)
     // rho_size = 1 << 2*N+1, bin = binary state string of length N
@@ -83,6 +90,15 @@ import "build-release/bindings/libdmqs_uppaal.so" {
     
     // Apply amplitude damping and dephasing noise channel on rho as seen in: 10.1098/rspa.2008.0439
     void UAmplitudeDampeningAndDephasing(double& rho[32], int rho_size, double& T1[2], double& T2[2], double t);
+
+    // Apply a noise channel to the density matrix.
+    // See https://link.springer.com/content/pdf/10.1007/s10773-019-04332-z.pdf
+    // and https://docs.pennylane.ai/en/stable/_modules/pennylane/ops/channel.html
+    // for details on the implementation of channels.
+    void UApplyChannel(double& rho[32], int rho_size, int channel, double& probs[2], int probs_size);
+    
+    // Applies noise with a single probability parameter
+    void UApplySChannel(double& rho[32], int rho_size, int channel, double prob);
 };
 ```
 
