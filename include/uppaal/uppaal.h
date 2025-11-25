@@ -23,4 +23,6 @@ extern "C" void UAmplitudeDampeningAndDephasing(double* rho, int rho_size,
                                                 const double* T2, double t);
 extern "C" void UApplyChannel(double* rho, int rho_size, int channel,
                               double* probs, int probs_size);
+extern "C" void UApplySChannel(double* rho, int rho_size, int channel,
+                              double probs);
 #endif // INCLUDE_UPPAAL_UPPAAL_H_
