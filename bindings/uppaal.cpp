@@ -132,9 +132,9 @@ extern "C" void UAmplitudeDampeningAndDephasing(double* rho, int rho_size,
 extern "C" void UApplyChannel(double* rho, int rho_size, int channel,
                               double* probs, int probs_size) {
     auto chan = static_cast<u_channel>(channel);
-    vector<cx_mat> ops;
+    kraus_ops ops;
     cx_mat res;
-    std::function<vector<cx_mat>(double)> chan_f = nullptr;
+    channel_f chan_f = nullptr;
     size_t mat_row = 1 << rho_size;
     size_t mat_size = mat_row * mat_row * 2;
     cx_mat in_mat = cx_mat(reinterpret_cast<cx_double*>(rho),
@@ -168,6 +168,15 @@ extern "C" void UApplyChannel(double* rho, int rho_size, int channel,
         ops = chan_f(probs[0]);
         res = apply_channel(in_mat, ops);
     }
+    memcpy(rho, res.memptr(), mat_size * sizeof(double));
+}
+
+extern "C" void UApplyGAD(double* rho, int rho_size, double p, double g) {
+    size_t mat_row = 1 << rho_size;
+    size_t mat_size = mat_row * mat_row * 2;
+    cx_mat in_mat = cx_mat(reinterpret_cast<cx_double*>(rho),
+                           mat_row, mat_row, false, true);
+    cx_mat res = apply_channel(in_mat, generalized_amplitude_damping_ops(p, g));
     memcpy(rho, res.memptr(), mat_size * sizeof(double));
 }
 

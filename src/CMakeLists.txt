@@ -2,7 +2,7 @@
 add_library(dmqs_core SHARED
     dmqs.cpp
     channels.cpp
-    gates/gates.cpp
+    gates.cpp
 )
 
 target_include_directories(dmqs_core PUBLIC 

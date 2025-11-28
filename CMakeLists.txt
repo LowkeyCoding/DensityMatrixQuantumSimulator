@@ -28,6 +28,9 @@ if(DMQS_EX)
     add_executable(densecoding examples/densecoding.cpp)
     target_link_libraries(densecoding dmqs_uppaal)
 
+    add_executable(densecoding2 examples/densecoding2.cpp)
+    target_link_libraries(densecoding2 dmqs_core)
+
     add_executable(floating examples/floating.cpp)
     target_link_libraries(floating dmqs_core)
 

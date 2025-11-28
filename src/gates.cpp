@@ -1,4 +1,4 @@
-#include "gates/gates.hpp"
+#include <dmqs/gates.hpp>
 
 /// @brief Basis state |0⟩
 cx_mat B0() {

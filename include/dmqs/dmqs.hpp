@@ -6,7 +6,7 @@
 #include <string>
 #include <complex>
 #include <cassert>
-#include <gates/gates.hpp>
+#include <dmqs/gates.hpp>
 
 using std::vector, std::string, std::invalid_argument, std::to_string,
       std::max, std::min, std::greater, std::map, std::equal,

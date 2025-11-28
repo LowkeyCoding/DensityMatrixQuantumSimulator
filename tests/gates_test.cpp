@@ -1,4 +1,4 @@
-#include <gates/gates.hpp>
+#include <dmqs/gates.hpp>
 #include <vector>
 #include "doctest/doctest.h"
 

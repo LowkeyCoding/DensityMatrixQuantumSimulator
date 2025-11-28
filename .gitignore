@@ -1,3 +1,5 @@
+### MASSIF ###
+massif.*
 ### PERF ###
 perf.*
 ### HEAPTRACK ###
