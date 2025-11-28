@@ -15,25 +15,23 @@ kraus_ops generalized_amplitude_damping_ops(const double& p,
                                             const double& gamma) {
     return {
         { {cx_double(sqrt(p), 0), 0},
-          {0, cx_double(sqrt(p)*sqrt(gamma), 0) } },
-        { {0, cx_double(sqrt(p)*sqrt(gamma), 0)},
+          {0, cx_double(sqrt(p) * sqrt(1 - gamma), 0) } },
+        { {0, cx_double(sqrt(p) * sqrt(gamma), 0)},
           {0, 0} },
-        { {cx_double(sqrt(1-p)*sqrt(1-gamma), 0), 0 },
-          {0, cx_double(sqrt(1-p), 0) } },
+        { {cx_double(sqrt(1 - p) * sqrt(1 - gamma), 0), 0 },
+          {0, cx_double(sqrt(1 - p), 0) } },
         { {0, 0},
-          {cx_double(sqrt(1-p)*sqrt(gamma), 0), 0} }
+          {cx_double(sqrt(1 - p) * sqrt(gamma), 0), 0} }
     };
 }
 
 // Phase damping channel Kraus operators
 kraus_ops phase_damping_ops(const double& p) {
     kraus_ops ops = {
-        { {cx_double(sqrt(p), 0), cx_double(0, 0)},
-          {cx_double(0, 0), cx_double(sqrt(p), 0)} },
-        { {cx_double(sqrt(1 - p), 0), cx_double(0, 0)},
-          {cx_double(0, 0), cx_double(0, 0)} },
+        { {cx_double(1, 0), cx_double(0, 0)},
+          {cx_double(0, 0), cx_double(sqrt(1-p), 0)} },
         { {cx_double(0, 0), cx_double(0, 0)},
-          {cx_double(0, 0), cx_double(sqrt(1 - p), 0)} }
+          {cx_double(0, 0), cx_double(sqrt(p), 0)} },
     };
     return ops;
 }
