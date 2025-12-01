@@ -16,7 +16,7 @@ TEST_CASE("Amplitude dampning") {
     const cx_mat rho_mm = BinaryStringToDensityMatrix("--");
     SUBCASE("gamma=0.0") {
         double gamma = 0.0;
-        kraus_ops channel = amplitude_damping_ops(1 - gamma);
+        vector<kraus_t> channel = amplitude_damping_ops(1 - gamma);
         SUBCASE("Rho=|00><00|") {
             cx_mat res = apply_channel(rho_00, channel);
             INFO("Result:\n", res, "\nExpected:\n", rho_00);
@@ -50,7 +50,7 @@ TEST_CASE("Amplitude dampning") {
     }
     SUBCASE("gamma=0.25") {
         double gamma = 0.25;
-        kraus_ops channel = amplitude_damping_ops(1 - gamma);
+        vector<kraus_t> channel = amplitude_damping_ops(1 - gamma);
         cx_mat expected = cx_mat(4, 4, zeros);
         SUBCASE("Rho=|00><00|") {
             // Should remain unchanged as when gamma goes towards 1,
@@ -117,7 +117,7 @@ TEST_CASE("Amplitude dampning") {
     }
     SUBCASE("gamma=0.5") {
         double gamma = 0.5;
-        kraus_ops channel = amplitude_damping_ops(1 - gamma);
+        vector<kraus_t> channel = amplitude_damping_ops(1 - gamma);
         cx_mat res = apply_channel(rho_01, channel);
         cx_mat expected = cx_mat(4, 4, zeros);
         expected(0, 0) = 0.5;
@@ -127,7 +127,7 @@ TEST_CASE("Amplitude dampning") {
     }
     SUBCASE("gamma=0.75") {
         double gamma = 0.75;
-        kraus_ops channel = amplitude_damping_ops(1 - gamma);
+        vector<kraus_t> channel = amplitude_damping_ops(1 - gamma);
         cx_mat res = apply_channel(rho_01, channel);
         cx_mat expected = cx_mat(4, 4, zeros);
         expected(0, 0) = 0.75;
@@ -137,7 +137,7 @@ TEST_CASE("Amplitude dampning") {
     }
     SUBCASE("gamma=1.0") {
         double gamma = 1.0;
-        kraus_ops channel = amplitude_damping_ops(1 - gamma);
+        vector<kraus_t> channel = amplitude_damping_ops(1 - gamma);
         SUBCASE("Rho=|00><00|") {
             cx_mat res = apply_channel(rho_00, channel);
             INFO("Result:\n", res, "\nExpected:\n", rho_00);
@@ -181,7 +181,7 @@ TEST_CASE("Phase Dampning") {
 
     SUBCASE("gamma=0.0") {
         double gamma = 0.0;
-        kraus_ops channel = phase_damping_ops(1 - gamma);
+        vector<kraus_t> channel = phase_damping_ops(1 - gamma);
         SUBCASE("Rho=|00><00|") {
             cx_mat res = apply_channel(rho_00, channel);
             INFO("Result:\n", res, "\nExpected:\n", rho_00);
@@ -216,7 +216,7 @@ TEST_CASE("Phase Dampning") {
 
     SUBCASE("gamma=0.25") {
         double gamma = 0.25;
-        kraus_ops channel = phase_damping_ops(1 - gamma);
+        vector<kraus_t> channel = phase_damping_ops(1 - gamma);
         INFO("Channel Kraus Operators:\n");
         for (const cx_mat& K : channel) {
             INFO(K, "\n");
@@ -298,7 +298,7 @@ TEST_CASE("Phase Dampning") {
 
     SUBCASE("gamma=0.5") {
         double gamma = 0.5;
-        kraus_ops channel = phase_damping_ops(1 - gamma);
+        vector<kraus_t> channel = phase_damping_ops(1 - gamma);
         SUBCASE("Rho=|00><00|") {
             cx_mat res = apply_channel(rho_00, channel);
             INFO("Result:\n", res, "\nExpected:\n", rho_00);
@@ -373,7 +373,7 @@ TEST_CASE("Phase Dampning") {
 
     SUBCASE("gamma=0.75") {
         double gamma = 0.75;
-        kraus_ops channel = phase_damping_ops(1 - gamma);
+        vector<kraus_t> channel = phase_damping_ops(1 - gamma);
         SUBCASE("Rho=|00><00|") {
             cx_mat res = apply_channel(rho_00, channel);
             INFO("Result:\n", res, "\nExpected:\n", rho_00);
@@ -446,7 +446,7 @@ TEST_CASE("Phase Dampning") {
 
     SUBCASE("gamma=1.0") {
         double gamma = 1.0;
-        kraus_ops channel = phase_damping_ops(1 - gamma);
+        vector<kraus_t> channel = phase_damping_ops(1 - gamma);
         SUBCASE("Rho=|00><00|") {
             cx_mat res = apply_channel(rho_00, channel);
             INFO("Result:\n", res, "\nExpected:\n", rho_00);

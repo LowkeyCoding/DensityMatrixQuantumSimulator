@@ -1,8 +1,8 @@
 #include <dmqs/gates.hpp>
 
 /// @brief Basis state |0⟩
-cx_mat B0() {
-    static const cx_mat::fixed<2, 2> gate = {
+gate1_t B0() {
+    static const gate1_t gate = {
         {cx_double(1, 0), cx_double(0, 0)},
         {cx_double(0, 0), cx_double(0, 0)}
     };
@@ -10,8 +10,8 @@ cx_mat B0() {
 }
 
 /// @brief Basis state |1⟩
-cx_mat B1() {
-    static const cx_mat::fixed<2, 2> gate = {
+gate1_t B1() {
+    static const gate1_t gate = {
         {cx_double(0, 0), cx_double(0, 0)},
         {cx_double(0, 0), cx_double(1, 0)},
     };
@@ -19,8 +19,8 @@ cx_mat B1() {
 }
 
 /// @brief Identity gate
-cx_mat Id() {
-    static const cx_mat::fixed<2, 2> gate = {
+gate1_t Id() {
+    static const gate1_t gate = {
         {cx_double(1, 0), cx_double(0, 0)},
         {cx_double(0, 0), cx_double(1, 0)},
     };
@@ -36,8 +36,8 @@ cx_mat Id(int n) {
 }
 
 /// @brief X gate
-cx_mat X() {
-    static const cx_mat::fixed<2, 2> gate = {
+gate1_t X() {
+    static const gate1_t gate = {
         {cx_double(0, 0), cx_double(1, 0)},
         {cx_double(1, 0), cx_double(0, 0)},
     };
@@ -45,8 +45,8 @@ cx_mat X() {
 }
 
 /// @brief Y gate
-cx_mat Y() {
-    static const cx_mat::fixed<2, 2> gate = {
+gate1_t Y() {
+    static const gate1_t gate = {
         {cx_double(0, 0), cx_double(0, -1)},
         {cx_double(0, 1), cx_double(0, 0)},
     };
@@ -54,8 +54,8 @@ cx_mat Y() {
 }
 
 /// @brief Z gate
-cx_mat Z() {
-    static const cx_mat::fixed<2, 2> gate = {
+gate1_t Z() {
+    static const gate1_t gate = {
         {cx_double(1, 0), cx_double(0, 0)},
         {cx_double(0, 0), cx_double(-1, 0)},
     };
@@ -63,8 +63,8 @@ cx_mat Z() {
 }
 
 /// @brief Hadamard gate
-cx_mat H() {
-    static const cx_mat::fixed<2, 2> gate = {
+gate1_t H() {
+    static const gate1_t gate = {
         {cx_double(1/sqrt(2), 0), cx_double(1/sqrt(2), 0)},
         {cx_double(1/sqrt(2), 0), cx_double(-(1/sqrt(2)), 0)},
     };

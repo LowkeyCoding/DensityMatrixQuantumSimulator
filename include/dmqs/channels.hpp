@@ -20,17 +20,16 @@ enum u_channel {
     DEPOLARIZING,
 };
 
-typedef cx_mat::fixed<2, 2> qubit;
-typedef vector<qubit> kraus_ops;
-typedef std::function<kraus_ops(const double&)> channel_f;
+typedef cx_mat::fixed<2, 2> kraus_t;
+typedef std::function<vector<kraus_t>(const double&)> channel_t;
 
-kraus_ops amplitude_damping_ops(const double& p);
-kraus_ops phase_damping_ops(const double& p);
-kraus_ops depolarizing_ops(const double& p);
-kraus_ops bit_flip_ops(const double& p);
-kraus_ops phase_flip_ops(const double& p);
-kraus_ops bit_phase_flip_ops(const double& p);
-channel_f u_channel_to_ops_f(u_channel channel);
-cx_mat apply_channel(const cx_mat &rho, const kraus_ops &kraus_ops);
-kraus_ops generalized_amplitude_damping_ops(const double& p,
+vector<kraus_t> amplitude_damping_ops(const double& p);
+vector<kraus_t> phase_damping_ops(const double& p);
+vector<kraus_t> depolarizing_ops(const double& p);
+vector<kraus_t> bit_flip_ops(const double& p);
+vector<kraus_t> phase_flip_ops(const double& p);
+vector<kraus_t> bit_phase_flip_ops(const double& p);
+channel_t u_channel_to_ops_f(u_channel channel);
+cx_mat apply_channel(const cx_mat &rho, const vector<kraus_t> &kraus_ops);
+vector<kraus_t> generalized_amplitude_damping_ops(const double& p,
                                             const double& gamma);

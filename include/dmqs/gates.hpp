@@ -5,6 +5,9 @@ using std::invalid_argument, std::to_string;
 
 using arma::cx_mat, arma::cx_double, arma::fill::eye;
 
+// 1 qubit gate
+typedef cx_mat::fixed<2, 2> gate1_t;
+
 enum u_gate {
   GID,
   GX,
@@ -15,14 +18,14 @@ enum u_gate {
   GB1,
 };
 
-cx_mat X();
+gate1_t X();
 cx_mat CX();
-cx_mat Y();
-cx_mat Z();
-cx_mat H();
-cx_mat B0();
-cx_mat B1();
-cx_mat Id();
+gate1_t Y();
+gate1_t Z();
+gate1_t H();
+gate1_t B0();
+gate1_t B1();
+gate1_t Id();
 cx_mat Id(int n);
 cx_mat RX(double theta);
 cx_mat RY(double theta);

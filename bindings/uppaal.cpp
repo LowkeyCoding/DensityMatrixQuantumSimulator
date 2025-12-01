@@ -132,9 +132,9 @@ extern "C" void UAmplitudeDampeningAndDephasing(double* rho, int rho_size,
 extern "C" void UApplyChannel(double* rho, int rho_size, int channel,
                               double* probs, int probs_size) {
     auto chan = static_cast<u_channel>(channel);
-    kraus_ops ops;
+    vector<kraus_t> ops;
     cx_mat res;
-    channel_f chan_f = nullptr;
+    channel_t chan_f = nullptr;
     size_t mat_row = 1 << rho_size;
     size_t mat_size = mat_row * mat_row * 2;
     cx_mat in_mat = cx_mat(reinterpret_cast<cx_double*>(rho),

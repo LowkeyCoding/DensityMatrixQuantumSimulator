@@ -7,7 +7,7 @@
 int main() {
     cx_mat rho = BinaryStringToDensityMatrix("01");
     double p = 0.5;
-    kraus_ops channel = amplitude_damping_ops(1 - p);
+    vector<kraus_t> channel = amplitude_damping_ops(1 - p);
     cx_mat res = apply_channel(rho, channel);
     cx_mat expected = BinaryStringToDensityMatrix("00");
     std::cout << "Kraus Operators:\n";
