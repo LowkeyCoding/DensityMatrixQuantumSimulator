@@ -3,8 +3,8 @@
 /// @brief Basis state |0⟩
 cx_mat B0() {
     static const cx_mat::fixed<2, 2> gate = {
-        cx_double(1, 0), cx_double(0, 0),
-        cx_double(0, 0), cx_double(0, 0)
+        {cx_double(1, 0), cx_double(0, 0)},
+        {cx_double(0, 0), cx_double(0, 0)}
     };
     return gate;
 }
@@ -12,8 +12,8 @@ cx_mat B0() {
 /// @brief Basis state |1⟩
 cx_mat B1() {
     static const cx_mat::fixed<2, 2> gate = {
-        cx_double(0, 0), cx_double(0, 0),
-        cx_double(0, 0), cx_double(1, 0),
+        {cx_double(0, 0), cx_double(0, 0)},
+        {cx_double(0, 0), cx_double(1, 0)},
     };
     return gate;
 }
@@ -21,8 +21,8 @@ cx_mat B1() {
 /// @brief Identity gate
 cx_mat Id() {
     static const cx_mat::fixed<2, 2> gate = {
-        cx_double(1, 0), cx_double(0, 0),
-        cx_double(0, 0), cx_double(1, 0),
+        {cx_double(1, 0), cx_double(0, 0)},
+        {cx_double(0, 0), cx_double(1, 0)},
     };
     return gate;
 }
@@ -38,8 +38,8 @@ cx_mat Id(int n) {
 /// @brief X gate
 cx_mat X() {
     static const cx_mat::fixed<2, 2> gate = {
-        cx_double(0, 0), cx_double(1, 0),
-        cx_double(1, 0), cx_double(0, 0),
+        {cx_double(0, 0), cx_double(1, 0)},
+        {cx_double(1, 0), cx_double(0, 0)},
     };
     return gate;
 }
@@ -47,8 +47,8 @@ cx_mat X() {
 /// @brief Y gate
 cx_mat Y() {
     static const cx_mat::fixed<2, 2> gate = {
-        cx_double(0, 0), cx_double(0, -1),
-        cx_double(0, 1), cx_double(0, 0),
+        {cx_double(0, 0), cx_double(0, -1)},
+        {cx_double(0, 1), cx_double(0, 0)},
     };
     return gate;
 }
@@ -56,8 +56,8 @@ cx_mat Y() {
 /// @brief Z gate
 cx_mat Z() {
     static const cx_mat::fixed<2, 2> gate = {
-        cx_double(1, 0), cx_double(0, 0),
-        cx_double(0, 0), cx_double(-1, 0),
+        {cx_double(1, 0), cx_double(0, 0)},
+        {cx_double(0, 0), cx_double(-1, 0)},
     };
     return gate;
 }
@@ -65,8 +65,8 @@ cx_mat Z() {
 /// @brief Hadamard gate
 cx_mat H() {
     static const cx_mat::fixed<2, 2> gate = {
-        cx_double(1/sqrt(2), 0), cx_double(1/sqrt(2), 0),
-        cx_double(1/sqrt(2), 0), cx_double(-(1/sqrt(2)), 0),
+        {cx_double(1/sqrt(2), 0), cx_double(1/sqrt(2), 0)},
+        {cx_double(1/sqrt(2), 0), cx_double(-(1/sqrt(2)), 0)},
     };
     return gate;
 }
@@ -74,10 +74,10 @@ cx_mat H() {
 /// @brief Controlled X gate
 cx_mat CX() {
     static const cx_mat::fixed<4, 4> gate = {
-        cx_double(1, 0), cx_double(0, 0), cx_double(0, 0), cx_double(0, 0),
-        cx_double(0, 0), cx_double(1, 0), cx_double(0, 0), cx_double(0, 0),
-        cx_double(0, 0), cx_double(0, 0), cx_double(0, 0), cx_double(1, 0),
-        cx_double(0, 0), cx_double(0, 0), cx_double(1, 0), cx_double(0, 0),
+        {cx_double(1, 0), cx_double(0, 0), cx_double(0, 0), cx_double(0, 0)},
+        {cx_double(0, 0), cx_double(1, 0), cx_double(0, 0), cx_double(0, 0)},
+        {cx_double(0, 0), cx_double(0, 0), cx_double(0, 0), cx_double(1, 0)},
+        {cx_double(0, 0), cx_double(0, 0), cx_double(1, 0), cx_double(0, 0)},
     };
     return gate;
 }
@@ -89,8 +89,8 @@ cx_mat RX(double theta) {
     double theta_r = theta * M_PI / 180.0 / 2.0; // Convert to half radians
 
     cx_mat::fixed<2, 2> rx_theta = {
-        cx_double(cos(theta_r), 0), cx_double(0, -sin(theta_r)),
-        cx_double(0, -sin(theta_r)), cx_double(cos(theta_r), 0)
+        {cx_double(cos(theta_r), 0), cx_double(0, -sin(theta_r))},
+        {cx_double(0, -sin(theta_r)), cx_double(cos(theta_r), 0)}
     };
     return rx_theta;
 }
@@ -101,8 +101,8 @@ cx_mat RX(double theta) {
 cx_mat RY(double theta) {
     double theta_r = (theta / 180.0 * M_PI) / 2.0; // Convert to half radians
     cx_mat::fixed<2, 2> ry_theta = {
-        cx_double(cos(theta_r), 0), cx_double(-sin(theta_r), 0),
-        cx_double(sin(theta_r), 0), cx_double(cos(theta_r), 0)
+        {cx_double(cos(theta_r), 0), cx_double(-sin(theta_r), 0)},
+        {cx_double(sin(theta_r), 0), cx_double(cos(theta_r), 0)}
     };
     return ry_theta;
 }
@@ -113,8 +113,8 @@ cx_mat RY(double theta) {
 cx_mat RZ(double theta) {
     double theta_r = (theta / 180.0 * M_PI) / 2.0; // Convert to half radians
     cx_mat::fixed<2, 2> rz_theta = {
-        std::exp(cx_double(0, -theta_r)), cx_double(0, 0),
-        cx_double(0, 0), std::exp(cx_double(0, theta_r)),
+        {std::exp(cx_double(0, -theta_r)), cx_double(0, 0)},
+        {cx_double(0, 0), std::exp(cx_double(0, theta_r))},
     };
     return rz_theta;
 }
