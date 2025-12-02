@@ -4,8 +4,8 @@
 vector<kraus_t> amplitude_damping_ops(const double& p) {
     return {
         { {cx_double(1, 0), cx_double(0, 0)},
-          {cx_double(0, 0), cx_double(sqrt(p), 0)} },
-        { {cx_double(0, 0), cx_double(sqrt(1 - p), 0)},
+          {cx_double(0, 0), cx_double(sqrt(1 - p), 0)} },
+        { {cx_double(0, 0), cx_double(sqrt(p), 0)},
           {cx_double(0, 0), cx_double(0, 0)}}
     };
 }
@@ -64,21 +64,18 @@ vector<kraus_t> bit_phase_flip_ops(const double& p) {
 }
 
 vector<kraus_t> depolarizing_ops(const double& p) {
-    vector<kraus_t> ops;
-    double sqrt_p_over_3 = sqrt(p / 3.0);
-    kraus_t E0 = { {cx_double(sqrt(1-p), 0), cx_double(0, 0)},
-                 {cx_double(0, 0), cx_double(sqrt(1-p), 0)} };
-    kraus_t E1 = { {cx_double(0, 0), cx_double(0, sqrt_p_over_3)},
-                 {cx_double(0, sqrt_p_over_3), cx_double(0, 0)} };
-    kraus_t E2 = { {cx_double(0, 0), cx_double(0, -sqrt_p_over_3)},
-                 {cx_double(0, sqrt_p_over_3), cx_double(0, 0)} };
-    kraus_t E3 = { {cx_double(sqrt_p_over_3, 0), cx_double(0, 0)},
-                 {cx_double(0, 0), cx_double(-sqrt_p_over_3, 0)} };
-    ops.push_back(E0);
-    ops.push_back(E1);
-    ops.push_back(E2);
-    ops.push_back(E3);
-    return ops;
+    double sqrt1 = sqrt(1 - ((p * 3.0)/ 4.0));
+    double sqrt2 = sqrt(p / 4.0);
+    return {
+      { { cx_double(sqrt1, 0), cx_double(0, 0) },
+        { cx_double(0, 0), cx_double(sqrt1, 0) } },
+      { { cx_double(0, 0), cx_double(sqrt2, 0) },
+        { cx_double(sqrt2, 0), cx_double(0, 0) } },
+      { { cx_double(0, 0), cx_double(0, -sqrt2) },
+        { cx_double(0, sqrt2), cx_double(0, 0) } },
+      { { cx_double(sqrt2, 0), cx_double(0, 0) },
+        { cx_double(0, 0), cx_double(-sqrt2, 0) } },
+    };
 }
 
 channel_t u_channel_to_ops_f(u_channel channel) {

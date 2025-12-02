@@ -25,27 +25,27 @@ TEST_CASE("Amplitude dampning") {
         SUBCASE("Rho=|01><01|") {
             cx_mat res = apply_channel(rho_01, channel);
             INFO("Result:\n", res, "\nExpected:\n", rho_00);
-            CHECK(mat_eq(res, rho_01, DEC14));
+            CHECK(mat_eq(res, rho_00, DEC14));
         }
         SUBCASE("Rho=|10><10|") {
             cx_mat res = apply_channel(rho_10, channel);
             INFO("Result:\n", res, "\nExpected:\n", rho_10);
-            CHECK(mat_eq(res, rho_10, DEC14));
+            CHECK(mat_eq(res, rho_00, DEC14));
         }
         SUBCASE("Rho=|11><11|") {
             cx_mat res = apply_channel(rho_11, channel);
             INFO("Result:\n", res, "\nExpected:\n", rho_11);
-            CHECK(mat_eq(res, rho_11, DEC14));
+            CHECK(mat_eq(res, rho_00, DEC14));
         }
         SUBCASE("Rho=|++><++|") {
             cx_mat res = apply_channel(rho_pp, channel);
             INFO("Result:\n", res, "\nExpected:\n", rho_pp);
-            CHECK(mat_eq(res, rho_pp, DEC14));
+            CHECK(mat_eq(res, rho_00, DEC14));
         }
         SUBCASE("Rho=|--><--|") {
             cx_mat res = apply_channel(rho_mm, channel);
             INFO("Result:\n", res, "\nExpected:\n", rho_mm);
-            CHECK(mat_eq(res, rho_mm, DEC14));
+            CHECK(mat_eq(res, rho_00, DEC14));
         }
     }
     SUBCASE("gamma=0.25") {
@@ -61,28 +61,28 @@ TEST_CASE("Amplitude dampning") {
         }
         SUBCASE("Rho=|01><01|") {
             cx_mat res = apply_channel(rho_01, channel);
-            expected(0, 0) = 0.25; // 1 - gamma
-            expected(1, 1) = 0.75; // 1 - (1 - gamma)
+            expected(0, 0) = 0.75; // 1 - gamma
+            expected(1, 1) = 0.25; // 1 - (1 - gamma)
             INFO("Result:\n", res, "\nExpected:\n", expected);
             CHECK(mat_eq(res, expected, DEC14));
         }
         SUBCASE("Rho=|10><10|") {
             cx_mat res = apply_channel(rho_10, channel);
-            expected(0, 0) = 0.25; // 1 - gamma
-            expected(2, 2) = 0.75; // 1 - (1 - gamma)
+            expected(0, 0) = 0.75; // 1 - gamma
+            expected(2, 2) = 0.25; // 1 - (1 - gamma)
             INFO("Result:\n", res, "\nExpected:\n", expected);
             CHECK(mat_eq(res, expected, DEC14));
         }
         SUBCASE("Rho=|11><11|") {
             cx_mat res = apply_channel(rho_11, channel);
             // pow(0.25, 2)
-            expected(0, 0) = 0.0625;
+            expected(0, 0) = 0.5625;
             // sqrt(0.75)*sqrt(0.25)*sqrt(0.75)*sqrt(0.25)
             expected(1, 1) = 0.1875;
             // sqrt(0.75)*sqrt(0.25)*sqrt(0.75)*sqrt(0.25)
             expected(2, 2) = 0.1875;
             // pow(0.75, 2)
-            expected(3, 3) = 0.5625;
+            expected(3, 3) = 0.0625;
             INFO("Result:\n", res, "\nExpected:\n", expected);
             CHECK(mat_eq(res, expected, DEC14));
         }
@@ -130,8 +130,8 @@ TEST_CASE("Amplitude dampning") {
         vector<kraus_t> channel = amplitude_damping_ops(1 - gamma);
         cx_mat res = apply_channel(rho_01, channel);
         cx_mat expected = cx_mat(4, 4, zeros);
-        expected(0, 0) = 0.75;
-        expected(1, 1) = 0.25;
+        expected(0, 0) = 0.25;
+        expected(1, 1) = 0.75;
         INFO("Result:\n", res, "\nExpected:\n", expected);
         CHECK(mat_eq(res, expected, DEC14));
     }
@@ -146,27 +146,27 @@ TEST_CASE("Amplitude dampning") {
         SUBCASE("Rho=|01><01|") {
             cx_mat res = apply_channel(rho_01, channel);
             INFO("Result:\n", res, "\nExpected:\n", rho_00);
-            CHECK(mat_eq(res, rho_00, DEC14));
+            CHECK(mat_eq(res, rho_01, DEC14));
         }
         SUBCASE("Rho=|10><10|") {
             cx_mat res = apply_channel(rho_10, channel);
             INFO("Result:\n", res, "\nExpected:\n", rho_00);
-            CHECK(mat_eq(res, rho_00, DEC14));
+            CHECK(mat_eq(res, rho_10, DEC14));
         }
         SUBCASE("Rho=|11><11|") {
             cx_mat res = apply_channel(rho_11, channel);
             INFO("Result:\n", res, "\nExpected:\n", rho_00);
-            CHECK(mat_eq(res, rho_00, DEC14));
+            CHECK(mat_eq(res, rho_11, DEC14));
         }
         SUBCASE("Rho=|++><++|") {
             cx_mat res = apply_channel(rho_pp, channel);
             INFO("Result:\n", res, "\nExpected:\n", rho_00);
-            CHECK(mat_eq(res, rho_00, DEC14));
+            CHECK(mat_eq(res, rho_pp, DEC14));
         }
         SUBCASE("Rho=|--><--|") {
             cx_mat res = apply_channel(rho_mm, channel);
             INFO("Result:\n", res, "\nExpected:\n", rho_00);
-            CHECK(mat_eq(res, rho_00, DEC14));
+            CHECK(mat_eq(res, rho_mm, DEC14));
         }
     }
 }
