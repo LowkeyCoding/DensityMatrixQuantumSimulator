@@ -16,14 +16,15 @@ enum u_channel {
     PHASE_DAMPING,
     BIT_FLIP,
     PHASE_FLIP,
-    BIT_PHASE_FLIP,
     DEPOLARIZING,
+    BIT_PHASE_FLIP,
 };
 
 typedef cx_mat::fixed<2, 2> kraus_t;
 typedef std::function<vector<kraus_t>(const double&)> channel_t;
 
 vector<kraus_t> amplitude_damping_ops(const double& p);
+vector<kraus_t> amplitude_damping_ops2(const double& p, const double& t);
 vector<kraus_t> phase_damping_ops(const double& p);
 vector<kraus_t> depolarizing_ops(const double& p);
 vector<kraus_t> bit_flip_ops(const double& p);

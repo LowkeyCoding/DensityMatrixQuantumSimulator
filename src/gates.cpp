@@ -167,7 +167,7 @@ cx_mat SWAP(int q1, int q2) {
 /// @param M The input matrix
 /// @return M^†
 cx_mat adjoint(const cx_mat& M) {
-    return conj(M).st();
+    return M.t();
 }
 
 /// @brief Checks equality between two density matrixes

@@ -7,6 +7,29 @@
 #define EXACT 0.0
 #define DEC14 1e-14
 
+TEST_CASE("Conditions for Kraus Operators") {
+    for (uint k = 1; k < BIT_PHASE_FLIP; k++) {
+        for (double n = 0.00; n < 1; n+=0.1) {
+            auto ops = u_channel_to_ops_f((u_channel)k)(n);
+            auto sum = cx_mat(2, 2, zeros);
+            for (uint i = 0; i < ops.size(); i++) {
+                sum += ops[i] * ops[i].t();
+            }
+            INFO("k=", k, ", n=", n, ", sum= \n", sum);
+            CHECK(approx_equal(sum, Id(), "reldiff", 1e-14));
+            auto sum2 = cx_mat(4, 4, zeros);
+            for (uint i = 0; i < ops.size(); i++) {
+                for (uint j = 0; j < ops.size(); j++) {
+                    sum2 += kron(ops[i],  ops[j]) * kron(ops[i],  ops[j]).t();
+                }
+            }
+            INFO("k=", k, ", n=", n, ", sum= \n", sum2);
+            assert(approx_equal(sum2, Id(2), "reldiff", 1e-14));
+            sum.fill(zeros);
+        }
+    }
+}
+
 TEST_CASE("Amplitude dampning") {
     const cx_mat rho_00 = BinaryStringToDensityMatrix("00");
     const cx_mat rho_01 = BinaryStringToDensityMatrix("01");
