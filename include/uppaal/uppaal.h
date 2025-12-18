@@ -25,4 +25,6 @@ extern "C" void UApplyChannel(double* rho, int rho_size, int channel,
                               double* probs, int probs_size);
 extern "C" void UApplySChannel(double* rho, int rho_size, int channel,
                               double probs);
+extern "C" void UApplyGAD(double* rho, int rho_size, double p, double g);
+extern "C" void UResetQubit(double* rho, int rho_size, int qubit);
 #endif // INCLUDE_UPPAAL_UPPAAL_H_

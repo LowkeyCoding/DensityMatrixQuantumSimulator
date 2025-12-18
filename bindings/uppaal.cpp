@@ -76,7 +76,8 @@ extern "C" void UBasisProjection(double* rho, int rho_size, int target,
     size_t mat_row = 1 << rho_size;
     size_t mat_size = mat_row * mat_row * 2;
     cx_mat in_mat = cx_mat(reinterpret_cast<cx_double*>(rho),
-                           mat_row, mat_row, true, true);
+                           mat_row, mat_row, false, true);
+
     cx_mat res = BasisProjection(in_mat, target, state);
     memcpy(rho, res.memptr(), mat_size * sizeof(double));
 }
@@ -110,6 +111,16 @@ extern "C" int UMeasureAll(double* rho, int rho_size, double r) {
     cx_mat in_mat = cx_mat(reinterpret_cast<cx_double*>(rho),
                            mat_row, mat_row, false, true);
     return Sample(in_mat, r);
+}
+
+// Measure all qubits and return result (does not collapse state)
+extern "C" void UResetQubit(double* rho, int rho_size, int qubit) {
+    size_t mat_row = 1 << rho_size;
+    size_t mat_size = mat_row * mat_row * 2;
+    cx_mat in_mat = cx_mat(reinterpret_cast<cx_double*>(rho),
+                           mat_row, mat_row, false, true);
+    cx_mat res = reset_qubit(in_mat, qubit);
+    memcpy(rho, res.memptr(), mat_size * sizeof(double));
 }
 
 // Apply amplitude damping and dephasing noise channel on rho as seen

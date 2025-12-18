@@ -87,6 +87,17 @@ vector<kraus_t> depolarizing_ops(const double& p) {
     };
 }
 
+// Reset channel Kraus operators
+vector<kraus_t> reset_ops() {
+    return {
+        { { cx_double(1, 0), cx_double(0, 0) },
+          { cx_double(0, 0), cx_double(0, 0) } },
+        { { cx_double(0, 0), cx_double(1, 0) },
+          { cx_double(0, 0), cx_double(0, 0) } }
+    };
+}
+
+
 channel_t u_channel_to_ops_f(u_channel channel) {
     switch (channel) {
         case AMPLITUDE_DAMPING:
@@ -116,11 +127,9 @@ cx_mat apply_channel(const cx_mat& rho, const vector<kraus_t>& ops) {
     for (int comb = 0; comb < total_combinations; comb++) {
         vector<kraus_t> ops_for_qubits;
         int temp = comb;
-        //std::cout << "Run: " << comb << std::endl;
         // Determine which Kraus operator to use for each qubit
         for (int q = 0; q < n_qubits; q++) {
             int op_idx = temp % n_ops;
-            //std::cout << op_idx << "," << std::endl;
             temp /= n_ops;
             ops_for_qubits.push_back(ops[op_idx]);
         }
@@ -133,4 +142,26 @@ cx_mat apply_channel(const cx_mat& rho, const vector<kraus_t>& ops) {
         result += (K * rho) * K.t();
     }
     return result;
+}
+
+cx_mat reset_qubit(const cx_mat& rho, int qubit) {
+    int dim = rho.n_rows;
+    int n_qubits = slog2(dim);
+    cx_mat m0 = Id();
+    cx_mat m1 = Id();
+    vector<kraus_t> ops = reset_ops();
+    if (qubit == 0) {
+      m0 = ops[0];
+      m1 = ops[1];
+    }
+    for (int q = 1; q < n_qubits; q++) {
+      if (q == qubit) {
+          m0 = kron(m0, ops[0]);
+          m1 = kron(m1, ops[1]);
+      } else {
+          m0 = kron(m0, Id());
+          m1 = kron(m1, Id());
+      }
+    }
+    return ((m0 * rho) * m0.t()) + ((m1 * rho) * m1.t());
 }

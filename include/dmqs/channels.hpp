@@ -30,6 +30,8 @@ vector<kraus_t> depolarizing_ops(const double& p);
 vector<kraus_t> bit_flip_ops(const double& p);
 vector<kraus_t> phase_flip_ops(const double& p);
 vector<kraus_t> bit_phase_flip_ops(const double& p);
+vector<kraus_t> reset_ops();
+cx_mat reset_qubit(const cx_mat& rho, int qubit);
 channel_t u_channel_to_ops_f(u_channel channel);
 cx_mat apply_channel(const cx_mat &rho, const vector<kraus_t> &kraus_ops);
 vector<kraus_t> generalized_amplitude_damping_ops(const double& p,
