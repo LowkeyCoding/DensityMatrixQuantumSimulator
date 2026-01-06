@@ -55,10 +55,10 @@ vector<kraus_t> bit_flip_ops(const double& p) {
 
 vector<kraus_t> phase_flip_ops(const double& p) {
     return {
-        { { cx_double(sqrt(p), 0), cx_double(0, 0) },
-          { cx_double(0, 0), cx_double(sqrt(p), 0) } },
         { { cx_double(sqrt(1 - p), 0), cx_double(0, 0) },
-          { cx_double(0, 0), cx_double(sqrt(1 - p)) } }
+          { cx_double(0, 0), cx_double(sqrt(1 - p)) } },
+        { { cx_double(sqrt(p), 0), cx_double(0, 0) },
+          { cx_double(0, 0), cx_double(-sqrt(p), 0) } },
     };
 }
 
