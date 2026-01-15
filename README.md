@@ -89,16 +89,22 @@ import "build-release/bindings/libdmqs_uppaal.so" {
     int UMeasureAll(double& rho[size], int rho_size, double random_value);
     
     // Apply amplitude damping and dephasing noise channel on rho as seen in: 10.1098/rspa.2008.0439
-    void UAmplitudeDampeningAndDephasing(double& rho[32], int rho_size, double& T1[2], double& T2[2], double t);
+    void UAmplitudeDampeningAndDephasing(double& rho[size], int rho_size, double& T1[N], double& T2[N], double t);
 
     // Apply a noise channel to the density matrix.
     // See https://link.springer.com/content/pdf/10.1007/s10773-019-04332-z.pdf
     // and https://docs.pennylane.ai/en/stable/_modules/pennylane/ops/channel.html
     // for details on the implementation of channels.
-    void UApplyChannel(double& rho[32], int rho_size, int channel, double& probs[2], int probs_size);
+    void UApplyChannel(double& rho[size], int rho_size, int channel, double& probs[N], int probs_size);
     
     // Applies noise with a single probability parameter
-    void UApplySChannel(double& rho[32], int rho_size, int channel, double prob);
+    void UApplySChannel(double& rho[size], int rho_size, int channel, double prob);
+    
+    // Applies a Generalised Amplitude Dampning and Dephasing channel
+    void UApplyGAD(double& rho[size], int rho_size, double p, double g);
+    
+    // Applies a reset channel to a specific qubit
+    void UResetQubit(double& rho[size], int rho_size, int qubit);
 };
 ```
 
