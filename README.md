@@ -57,54 +57,51 @@ const int DEPOLARIZING = 5;
 import "build-release/bindings/libdmqs_uppaal.so" {
     // Initialize density matrix with binary state string (e.g., "01" for |01⟩ or "+-" for |+-⟩)
     // rho_size = 1 << 2*N+1, bin = binary state string of length N
-    void UInitBinState(double& rho[size], int rho_size, const string& bin);
+    void InitBinState(double& rho[size], int rho_size, const string& bin);
     
     // Apply single-qubit gate to target qubit
-    void UApplyGate(double& rho[size], int rho_size, int gate, int target);
+    void ApplyGate(double& rho[size], int rho_size, int gate, int target);
     
     // Apply controlled gate (control → target)
-    void UApplyCGate(double& rho[size], int rho_size, int gate, int control, int target);
+    void ApplyCGate(double& rho[size], int rho_size, int gate, int control, int target);
     
     // Apply custom unitary matrix U (u_size must equal rho_size)
-    void UApplyUnitary(double& rho[size], int rho_size, double& U[size], int u_size);
+    void ApplyUnitary(double& rho[size], int rho_size, double& U[size], int u_size);
     
     // Partial trace: extract subsystem state into prho
     // prho_size = 1 << N*2-1 where N = len(targets)
-    void UPartialTrace(double& rho[size], int rho_size, double& prho[partial_size], 
+    void PartialTrace(double& rho[size], int rho_size, double& prho[partial_size], 
                       int prho_size, int& targets[target_count], int targets_size);
     
     // Project target qubit onto basis state (0 or 1)
-    void UBasisProjection(double& rho[size], int rho_size, int target, int base);
+    void BasisProjection(double& rho[size], int rho_size, int target, int base);
     
     // Project multiple target qubits onto basis state (bitmask)
-    void UBasisProjections(double& rho[size], int rho_size, int& targets[target_count], 
+    void BasisProjections(double& rho[size], int rho_size, int& targets[target_count], 
                           int targets_size, int state);
     
     // Measure target qubits and return result (does not collapse state)
     // Use UBasisProjections to collapse after measurement
-    int UPartialMeasure(double& rho[size], int rho_size, int& targets[target_count], 
+    int PartialMeasure(double& rho[size], int rho_size, int& targets[target_count], 
                        int targets_size, double r);
     
     // Measure all qubits and return result (does not collapse state)
-    int UMeasureAll(double& rho[size], int rho_size, double random_value);
+    int MeasureAll(double& rho[size], int rho_size, double random_value);
     
     // Apply amplitude damping and dephasing noise channel on rho as seen in: 10.1098/rspa.2008.0439
-    void UAmplitudeDampeningAndDephasing(double& rho[size], int rho_size, double& T1[N], double& T2[N], double t);
+    void AmplitudeDampeningAndDephasing(double& rho[size], int rho_size, double& T1[N], double& T2[N], double t);
 
     // Apply a noise channel to the density matrix.
     // See https://link.springer.com/content/pdf/10.1007/s10773-019-04332-z.pdf
     // and https://docs.pennylane.ai/en/stable/_modules/pennylane/ops/channel.html
     // for details on the implementation of channels.
-    void UApplyChannel(double& rho[size], int rho_size, int channel, double& probs[N], int probs_size);
-    
-    // Applies noise with a single probability parameter
-    void UApplySChannel(double& rho[size], int rho_size, int channel, double prob);
+    void ApplyChannel(double& rho[size], int rho_size, int channel, double probs);
     
     // Applies a Generalised Amplitude Dampning and Dephasing channel
-    void UApplyGAD(double& rho[size], int rho_size, double p, double g);
+    void ApplyGAD(double& rho[size], int rho_size, double p, double g);
     
     // Applies a reset channel to a specific qubit
-    void UResetQubit(double& rho[size], int rho_size, int qubit);
+    void ResetQubit(double& rho[size], int rho_size, int qubit);
 };
 ```
 

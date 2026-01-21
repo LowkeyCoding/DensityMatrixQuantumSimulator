@@ -3,7 +3,7 @@
 #include <functional>
 #include <algorithm>
 #include <vector>
-
+namespace dmqs {
 /// @brief Takes a binary string and converts it into a density matrix
 ///        with the basis state 01.
 /// @param bin A binary string e.g "0101"
@@ -330,3 +330,4 @@ cx_mat ApplyAmplitudeDampeningAndDephasing(const cx_mat& rho, const double* T1,
     }
     return temp_state;
 }
+} // namespace dmqs

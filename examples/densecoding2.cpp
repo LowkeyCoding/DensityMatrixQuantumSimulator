@@ -3,7 +3,7 @@
 
 #include <dmqs/dmqs.hpp>
 #include <dmqs/channels.hpp>
-
+using namespace dmqs;
 int main() {
     cx_mat rho = BinaryStringToDensityMatrix("01");
     double p = 0.5;

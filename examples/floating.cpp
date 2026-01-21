@@ -1,6 +1,6 @@
 #include <iostream>
 #include <dmqs/dmqs.hpp>
-
+using dmqs::BinaryStringToDensityMatrix, dmqs::ApplyGate;
 int main() {
     cx_mat result = BinaryStringToDensityMatrix("0");
     int loop_count = 1 << 10;

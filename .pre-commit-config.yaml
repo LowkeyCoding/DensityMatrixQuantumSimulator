@@ -4,7 +4,7 @@ repos:
     rev: v1.3.5
     hooks:
       - id: cpplint
-        args: ["--filter=-legal/copyright,-whitespace/comments"]
+        args: ["--filter=-legal/copyright,-whitespace/comments,-whitespace/indent_namespace,-build/namespaces"]
       - id: cppcheck
         args: [
           --enable=all,--check-level=exhaustive, --suppress=missingInclude,

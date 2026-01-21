@@ -5,6 +5,7 @@
 
 #define EXACT 0.0
 #define DEC14 1e-14
+using namespace dmqs;
 
 TEST_CASE("Generating 1 qubit state from basis string") {
     auto q0 = BinaryStringToDensityMatrix("0");

@@ -6,6 +6,7 @@
 
 #define EXACT 0.0
 #define DEC14 1e-14
+using namespace dmqs;
 
 TEST_CASE("Conditions for Kraus Operators") {
     for (uint k = 1; k < BIT_PHASE_FLIP; k++) {

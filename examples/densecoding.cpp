@@ -13,25 +13,25 @@ int main() {
     size_t size = 1 << (2*qc+1);
     double* test = reinterpret_cast<double*>(calloc(size, sizeof(double)));
     for (int i = 0; i < 1000000; i++) {
-        UInitBinState(test, qc, "100");
-        UApplyGate(test, qc, GH, 0);
-        UApplySChannel(test, qc, AMPLITUDE_DAMPING, p1);
-        UApplySChannel(test, qc, PHASE_DAMPING, p2);
-        UApplyCGate(test, qc, GX, 0, 1);
-        UApplySChannel(test, qc, AMPLITUDE_DAMPING, p1);
-        UApplySChannel(test, qc, PHASE_DAMPING, p2);
-        UApplyGate(test, qc, GX, 0);
-        UApplySChannel(test, qc, AMPLITUDE_DAMPING, p1);
-        UApplySChannel(test, qc, PHASE_DAMPING, p2);
-        UApplyGate(test, qc, GZ, 0);
-        UApplySChannel(test, qc, AMPLITUDE_DAMPING, p1);
-        UApplySChannel(test, qc, PHASE_DAMPING, p2);
-        UApplyCGate(test, qc, GX, 0, 1);
-        UApplySChannel(test, qc, AMPLITUDE_DAMPING, p1);
-        UApplySChannel(test, qc, PHASE_DAMPING, p2);
-        UApplyGate(test, qc, GH, 0);
-        UApplySChannel(test, qc, AMPLITUDE_DAMPING, p1);
-        UApplySChannel(test, qc, PHASE_DAMPING, p2);
-        UMeasureAll(test, qc, rand() / RAND_MAX);
+        InitBinState(test, qc, "100");
+        ApplyGate(test, qc, GH, 0);
+        ApplyChannel(test, qc, AMPLITUDE_DAMPING, p1);
+        ApplyChannel(test, qc, PHASE_DAMPING, p2);
+        ApplyCGate(test, qc, GX, 0, 1);
+        ApplyChannel(test, qc, AMPLITUDE_DAMPING, p1);
+        ApplyChannel(test, qc, PHASE_DAMPING, p2);
+        ApplyGate(test, qc, GX, 0);
+        ApplyChannel(test, qc, AMPLITUDE_DAMPING, p1);
+        ApplyChannel(test, qc, PHASE_DAMPING, p2);
+        ApplyGate(test, qc, GZ, 0);
+        ApplyChannel(test, qc, AMPLITUDE_DAMPING, p1);
+        ApplyChannel(test, qc, PHASE_DAMPING, p2);
+        ApplyCGate(test, qc, GX, 0, 1);
+        ApplyChannel(test, qc, AMPLITUDE_DAMPING, p1);
+        ApplyChannel(test, qc, PHASE_DAMPING, p2);
+        ApplyGate(test, qc, GH, 0);
+        ApplyChannel(test, qc, AMPLITUDE_DAMPING, p1);
+        ApplyChannel(test, qc, PHASE_DAMPING, p2);
+        MeasureAll(test, qc, rand() / RAND_MAX);
     }
 }
